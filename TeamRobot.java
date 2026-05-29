@@ -20,7 +20,7 @@ public class TeamRobot extends Robot
     
     @Override
     public short getIndividualScore(){
-        short totalMatchPoints = (short)(this.getAutoFuelCount() + this.getTeleFuelCount() + this.getEndFuelCount() + this.getClimbLevel()*10);
+        short totalMatchPoints = (short)(super.getAutoFuelCount() + super.getTeleFuelCount() + super.getEndFuelCount() + super.getClimbLevel()*10);
         return totalMatchPoints;
     }
     
