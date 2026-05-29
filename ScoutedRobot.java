@@ -29,8 +29,19 @@ public class ScoutedRobot extends Robot
     public ScoutedRobot(short shrTeamNumber, String csvLine){
         //
     }
+    
     public ScoutedRobot(short shrTeamNumber, short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating, String strNotes){
-        //
+        super(shrTeamNumber);
+        this.shrMatchesObserved = 1;
+        super.setAutoFuelCount(shrAutoFuelCount);
+        super.setTeleFuelCount(shrTeleFuelCount);
+        super.setEndFuelCount(shrEndFuelCount);
+        this.bytDefenceTime = bytDefenceTime;
+        this.bytMinorPenalties = bytMinorPenalties;
+        this.bytMajorPenalties = bytMajorPenalties;
+        this.bytDriverRating = bytDriverRating;
+        this.bytAccuracyRating = bytAccuracyRating;
+        this.strNotes = strNotes;
     }
     
     //methods
