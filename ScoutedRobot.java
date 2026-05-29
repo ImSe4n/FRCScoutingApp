@@ -27,6 +27,7 @@ public class ScoutedRobot extends Robot
     
     //methods
     
+    
     //getters and setters
 
 }
