@@ -22,7 +22,7 @@ public class Robot
     }
     
     public short getIndividualScore(){
-        short totalMatchPoints = (short) (this.shrAutoFuelCount + this.shrTeleFuelCount + this.shrEndFuelCount + this.bytClimbLevel*10);
+        short totalMatchPoints = (short)(this.shrAutoFuelCount + this.shrTeleFuelCount + this.shrEndFuelCount + this.bytClimbLevel*10);
         return totalMatchPoints;
     }
     

@@ -43,6 +43,7 @@ public class ScoutedRobot extends Robot
             this.bytDriverRating = Byte.parseByte(strParts[8].trim());
             this.bytAccuracyRating = Byte.parseByte(strParts[9].trim());
             this.shrMatchesObserved = Short.parseShort(strParts[10].trim());
+            
             if (strParts.length > 11){
                 this.strNotes = strParts[11].trim();
             }
@@ -96,10 +97,10 @@ public class ScoutedRobot extends Robot
     public void addMatchObservation(short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, int bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating){
         short previousMatchesObserved = this.shrMatchesObserved;
         
-        super.setAutoFuelCount((short) ((super.getAutoFuelCount() * previousMatchesObserved + shrAutoFuelCount) / (previousMatchesObserved + 1)));
-        super.setTeleFuelCount((short) ((super.getTeleFuelCount() * previousMatchesObserved + shrTeleFuelCount) / (previousMatchesObserved + 1)));
-        super.setEndFuelCount((short) ((super.getEndFuelCount() * previousMatchesObserved + shrEndFuelCount) / (previousMatchesObserved + 1)));
-        super.setClimbLevel((byte) ((super.getClimbLevel() * previousMatchesObserved + bytClimbLevel) / (previousMatchesObserved + 1)));
+        super.setAutoFuelCount((short)((super.getAutoFuelCount() * previousMatchesObserved + shrAutoFuelCount) / (previousMatchesObserved + 1)));
+        super.setTeleFuelCount((short)((super.getTeleFuelCount() * previousMatchesObserved + shrTeleFuelCount) / (previousMatchesObserved + 1)));
+        super.setEndFuelCount((short)((super.getEndFuelCount() * previousMatchesObserved + shrEndFuelCount) / (previousMatchesObserved + 1)));
+        super.setClimbLevel((byte)((super.getClimbLevel() * previousMatchesObserved + bytClimbLevel) / (previousMatchesObserved + 1)));
         
         this.bytDefenceTime = (byte)((this.bytDefenceTime * previousMatchesObserved + bytDefenceTime) / (previousMatchesObserved + 1));
         this.bytMinorPenalties = (byte)((this.bytMinorPenalties * previousMatchesObserved + bytMinorPenalties) / (previousMatchesObserved + 1));
