@@ -24,5 +24,9 @@ public class ScoutedRobot extends Robot
     public ScoutedRobot(short shrTeamNumber, short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating, String strNotes){
         //
     }
+    
+    //methods
+    
+    //getters and setters
 
 }
