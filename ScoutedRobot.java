@@ -16,8 +16,16 @@ public class ScoutedRobot extends Robot
     private String strNotes;
     
     public ScoutedRobot(short shrTeamNumber){
-        //
+        super(shrTeamNumber);
+        this.shrMatchesObserved = 0;
+        this.bytDefenceTime = 0;
+        this.bytMinorPenalties = 0;
+        this.bytMajorPenalties = 0;
+        this.bytDriverRating = 0;
+        this.bytAccuracyRating = 0;
+        this.strNotes = "Unknown";
     }
+    
     public ScoutedRobot(short shrTeamNumber, String csvLine){
         //
     }
