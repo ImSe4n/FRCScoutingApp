@@ -58,7 +58,7 @@ public class Alliance
         }
     }
 
-    public static short getNumAlliances(){
+    public static short getAllianceCount(){
         return Alliance.shrNumAlliances;
     }
 
