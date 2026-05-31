@@ -5,7 +5,7 @@
  * @author (your name)
  * @version (a version number or a date)
  */
-public class Robot
+public class Robot implements java.io.Serializable
 {
     private short shrTeamNumber;
     private short shrAutoFuelCount;
