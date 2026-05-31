@@ -26,36 +26,6 @@ public class ScoutedRobot extends Robot
         this.strNotes = "Unknown";
     }
     
-    public ScoutedRobot(short shrTeamNumber, String csvLine){
-        super(shrTeamNumber);
-        this.strNotes = "Unknown";
-        
-        String[] strParts = csvLine.split(",", 12);
-        try {
-            super.setTeamNumber(Short.parseShort(strParts[0].trim()));
-            super.setAutoFuelCount(Short.parseShort(strParts[1].trim()));
-            super.setTeleFuelCount(Short.parseShort(strParts[2].trim()));
-            super.setEndFuelCount(Short.parseShort(strParts[3].trim()));
-            super.setClimbLevel(Byte.parseByte(strParts[4].trim()));
-            this.bytDefenceTime = Byte.parseByte(strParts[5].trim());
-            this.bytMinorPenalties = Byte.parseByte(strParts[6].trim());
-            this.bytMajorPenalties = Byte.parseByte(strParts[7].trim());
-            this.bytDriverRating = Byte.parseByte(strParts[8].trim());
-            this.bytAccuracyRating = Byte.parseByte(strParts[9].trim());
-            this.shrMatchesObserved = Short.parseShort(strParts[10].trim());
-            
-            if (strParts.length > 11){
-                this.strNotes = strParts[11].trim();
-            }
-            else {
-                this.strNotes = "";
-            }
-        }
-        catch (NumberFormatException e){
-            //partial/corrupt csv so leave whatever fields were already set
-        }
-    }
-    
     public ScoutedRobot(short shrTeamNumber, short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating, String strNotes){
         super(shrTeamNumber);
         this.shrMatchesObserved = 1;
