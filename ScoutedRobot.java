@@ -91,6 +91,10 @@ public class ScoutedRobot extends Robot
         return this.shrMatchesObserved;
     }
 
+    public void setMatchesObserved(short shrMatchesObserved){
+        this.shrMatchesObserved = shrMatchesObserved;
+    }
+
     public byte getDefenceTime(){
         return this.bytDefenceTime;
     }
