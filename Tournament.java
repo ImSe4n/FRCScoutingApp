@@ -168,7 +168,7 @@ public class Tournament
                 intLeft = intMid + 1;
             }
             else {
-                intRight = intMid;
+                intRight = intMid - 1;
             }
         }
         
