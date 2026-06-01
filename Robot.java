@@ -31,7 +31,7 @@ public class Robot implements java.io.Serializable
         this.shrTeamNumber, this.shrAutoFuelCount, this.shrTeleFuelCount, this.shrEndFuelCount, this.bytClimbLevel, this.getIndividualScore());
     }
     
-    //Getters and Setters
+    //getters and Setters
     
     public short getTeamNumber(){
         return this.shrTeamNumber;
