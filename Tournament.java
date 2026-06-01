@@ -209,9 +209,66 @@ public class Tournament
                 j = j - 1; 
             }
 
-            //place the key in its correct position in the sorted part of 
-            //the array
+            //place the scouted robot in its correct position in the sorted part of 
+            //the arraylist
             this.scoutRobots.set(j + 1, key);
         }
+    }
+    
+    public void saveToFile(String strFileName){
+        try {
+            ObjectOutputStream objectWriter = new ObjectOutputStream(new FileOutputStream(strFileName));
+            
+            objectWriter.writeObject(this.scoutRobots);
+            objectWriter.close();
+        }
+        catch (IOException e){
+            System.out.println("Error handling file");
+        }
+    }
+    
+    public void loadFromFile(String strFileName){
+        try {
+            ObjectInputStream objectReader = new ObjectInputStream(new FileInputStream(strFileName));
+            
+            ArrayList<ScoutedRobot> loadedRobots = (ArrayList<ScoutedRobot>)objectReader.readObject();
+            this.scoutRobots = loadedRobots;
+            
+            objectReader.close();
+        }
+        catch (IOException e){
+            System.out.println("Error handling file");
+        }
+        catch (ClassNotFoundException e){
+            this.scoutRobots = new ArrayList<ScoutedRobot>();
+        }
+    }
+    
+    @Override
+    public String toString(){
+        String strResult = "Tournament Robots:\n";
+        
+        for (ScoutedRobot robot: this.scoutRobots){
+            strResult += robot.toString() + "\n";
+        }
+        
+        return strResult;
+    }
+    
+    //getters and setters
+    public ScoutedRobot[][] getMatchSchedule(){
+        return this.matchSchedule;
+    }
+    
+    public ArrayList<ScoutedRobot> getRobots(){
+        return this.scoutRobots;
+    }
+    
+    public short getRobotCount(){
+        return (short) this.scoutRobots.size();
+    }
+    
+    public short getMatchCount(){
+        return this.shrMatchCount;
     }
 }
