@@ -7,12 +7,14 @@
  */
 public class Robot implements java.io.Serializable
 {
+    //instance variables
     private short shrTeamNumber;
     private short shrAutoFuelCount;
     private short shrTeleFuelCount;
     private short shrEndFuelCount;
     private byte bytClimbLevel;
 
+    //constructor
     public Robot(short shrTeamNumber){
         this.shrTeamNumber = shrTeamNumber;
         this.shrAutoFuelCount = 0;
@@ -21,6 +23,7 @@ public class Robot implements java.io.Serializable
         this.bytClimbLevel = 0;
     }
     
+    //calculate the total points a robot gets based on scouting data
     public short getIndividualScore(){
         short totalMatchPoints = (short)(this.shrAutoFuelCount + this.shrTeleFuelCount + this.shrEndFuelCount + this.bytClimbLevel*10);
         return totalMatchPoints;

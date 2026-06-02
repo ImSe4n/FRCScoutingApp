@@ -7,17 +7,22 @@
  */
 public class Match
 {
+    //instance variables
     private Alliance redAlliance;
     private Alliance blueAlliance;
     private byte bytMatchNumber;
-
+    
+    //constructor
     public Match(Alliance redAlliance, Alliance blueAlliance, byte bytMatchNumber){
         this.redAlliance = redAlliance;
         this.blueAlliance = blueAlliance;
         this.bytMatchNumber = bytMatchNumber;
     }
-
+    
+    //get the winning alliance
     public Alliance getMatchWinner(){
+        //the winning alliance is the one who gets mroe points
+        //maybe consider a tie, but this is very rare
         if (this.redAlliance.calculateTotalScore() >= this.blueAlliance.calculateTotalScore()){
             return this.redAlliance;
         }
@@ -25,7 +30,9 @@ public class Match
             return this.blueAlliance;
         }
     }
-
+    
+    //get the summary of the game
+    //this method will be used for the match predictor
     public String getGameSummary(){
         short shrRedScore = this.redAlliance.calculateTotalScore();
         short shrBlueScore = this.blueAlliance.calculateTotalScore();

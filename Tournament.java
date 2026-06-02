@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class Tournament
 {
+    //instance variables
     private ArrayList<ScoutedRobot> scoutRobots;
     private ScoutedRobot[][] matchSchedule;
     private short shrMatchCount;
@@ -22,15 +23,18 @@ public class Tournament
     //maybe have a constant to limit number of matches
     //private static final short MAXMATCHES = 100;
     
+    //constructor
     public Tournament(){
         this.scoutRobots = new ArrayList<ScoutedRobot>();
         this.matchSchedule = new ScoutedRobot[50][6]; //assume each tournament has 50 qualification matches (for now)
     }
     
+    //add a robot object to the list of scouted robots
     public void addRobot(ScoutedRobot robot){
         this.scoutRobots.add(robot);
     }
     
+    //add a robot based on the team number
     public void addRobot(short shrTeamNumber){
         ScoutedRobot newScoutedRobot = new ScoutedRobot(shrTeamNumber);
         this.scoutRobots.add(newScoutedRobot);
@@ -39,9 +43,10 @@ public class Tournament
     //get team number from a string -> get from file later
     public void addRobot(String strTeamNumber){
         try{
-            short shrTeamNumber = Short.parseShort(strTeamNumber.trim());
-            ScoutedRobot newScoutedRobot = new ScoutedRobot(shrTeamNumber);
+            short shrTeamNumber = Short.parseShort(strTeamNumber); //parse the string into a short
+            ScoutedRobot newScoutedRobot = new ScoutedRobot(shrTeamNumber); //create a new scouted robot based on the team number
             
+            //add the newly created scoutedrobot to the array list
             this.scoutRobots.add(newScoutedRobot);
         }
         catch (NumberFormatException e){
@@ -49,7 +54,10 @@ public class Tournament
         }
     }
     
+    //using the robots from the scoutrobots array list, create a new match
+    //this method will be used for the match predictor?
     public void addMatchToSchedule(short shrMatchIndex, ScoutedRobot red1, ScoutedRobot red2, ScoutedRobot red3, ScoutedRobot blue1, ScoutedRobot blue2, ScoutedRobot blue3){
+        //if the current match index is valid (greater than 0 and not greater than 50/max matches) then add the match to the schedule
         if (shrMatchIndex >= 0 && shrMatchIndex < this.matchSchedule.length){
             this.matchSchedule[shrMatchIndex][0] = red1;
             this.matchSchedule[shrMatchIndex][1] = red2;
@@ -57,6 +65,9 @@ public class Tournament
             this.matchSchedule[shrMatchIndex][3] = blue1;
             this.matchSchedule[shrMatchIndex][4] = blue2;
             this.matchSchedule[shrMatchIndex][5] = blue3;
+            
+            //increase the match count by the current match index + 1
+            //since match 1 starts at index 0
             if (shrMatchIndex >= this.shrMatchCount){
                 this.shrMatchCount = (short)(shrMatchIndex + 1);
             }
@@ -68,6 +79,7 @@ public class Tournament
         this.mergeSort(this.scoutRobots, 0, this.scoutRobots.size() - 1);
     }
     
+    //sortByScore mergeSort helper method
     private void mergeSort(ArrayList<ScoutedRobot> robotList, int left, int right){
         int middle;
         
@@ -86,6 +98,7 @@ public class Tournament
         }
     }
     
+    //sortByScore merge helper method
     private void merge(ArrayList<ScoutedRobot> robotList, int left, int mid, int right){
         //calculate the sizes of the two subarrays to be merged
         int intLeftSize = mid - left + 1;
@@ -176,7 +189,7 @@ public class Tournament
         return null;
     }
     
-    //use insertion sort to sort the teams by team number
+    //use insertion sort to sort the teams by team number (might be useless since only score really matters..)
     private void sortByTeamNumber(){
         //length of the array
         int listLength = this.scoutRobots.size(); 
@@ -215,6 +228,7 @@ public class Tournament
         }
     }
     
+    //use oos to write the object to a file
     public void saveToFile(String strFileName){
         try {
             ObjectOutputStream objectWriter = new ObjectOutputStream(new FileOutputStream(strFileName));
@@ -227,11 +241,12 @@ public class Tournament
         }
     }
     
+    //ois to retrieve an object
     public void loadFromFile(String strFileName){
         try {
             ObjectInputStream objectReader = new ObjectInputStream(new FileInputStream(strFileName));
             
-            ArrayList<ScoutedRobot> loadedRobots = (ArrayList<ScoutedRobot>)objectReader.readObject();
+            ArrayList<ScoutedRobot> loadedRobots = (ArrayList<ScoutedRobot>)objectReader.readObject(); //need to cast as Object cannot be converted to the ScoutedRobot array list
             this.scoutRobots = loadedRobots;
             
             objectReader.close();

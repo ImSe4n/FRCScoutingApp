@@ -6,17 +6,21 @@
  * @version (a version number or a date)
  */
 
+//array list for each alliance of robots
 import java.util.ArrayList;
 
 public class Alliance
 {
+    //instance variables
     private short shrTotalClimbPoints;
     private byte bytTotalPenalties;
-
+    
     private static short shrNumAlliances = 0;
-
+    
+    //array lis to store robost in an alliance
     private ArrayList<Robot> robots;
-
+    
+    //overloaded constructor 1
     public Alliance(Robot robo1, Robot robo2, Robot robo3){
         this.robots = new ArrayList<Robot>();
         this.robots.add(robo1);
@@ -25,23 +29,29 @@ public class Alliance
         Alliance.shrNumAlliances++;
         this.updateAggregateStats();
     }
-
+    
+    //overloaded constructor 2
     public Alliance(ArrayList<Robot> robots){
         this.robots = new ArrayList<Robot>(robots);
         Alliance.shrNumAlliances++;
         this.updateAggregateStats();
     }
-
+    
+    //calculate the score of an alliance
+    //by add the score of each individual robot
     public short calculateTotalScore(){
         short totalAllianceScore = 0;
-
+        
+        //loop through an alliances and get the score of each robot
+        //then add to totalAllianceScore
         for(Robot robot: this.robots){
             totalAllianceScore += robot.getIndividualScore();
         }
 
         return totalAllianceScore;
     }
-
+    
+    //check if an alliance has more than 3 robots
     public boolean boolIsAllianceFull(){
         if (this.robots.size() >= 3){
             return true;
@@ -50,25 +60,27 @@ public class Alliance
             return false;
         }
     }
-
+    
+    //add a robot to the alliance
     public void addRobot(Robot robot){
         if (this.boolIsAllianceFull() == false){
             this.robots.add(robot);
             this.updateAggregateStats();
         }
     }
-
-    public static short getAllianceCount(){
-        return Alliance.shrNumAlliances;
-    }
-
+    
+    //update the stats of a robot for each robot added to an alliance or if an alliance is created
+    //sort of like a constructor but robots inside of an alliance may come with existing penalties and climb levels
     private void updateAggregateStats(){
         this.shrTotalClimbPoints = 0;
         this.bytTotalPenalties = 0;
-
+        
+        //loop through the array of robots
         for(Robot robot: this.robots){
+            //set the total climb points of the alliance based on the climb points from the robots
             this.shrTotalClimbPoints += robot.getClimbLevel() * 10;
-
+            
+            //if the robot is a ScoutedRobot, then first cast the element then add the number of penalties from the scouted robot to the total penalties
             if (robot instanceof ScoutedRobot){
                 ScoutedRobot scoutedRobot = (ScoutedRobot) robot;
 
@@ -88,5 +100,9 @@ public class Alliance
 
     public byte getTotalPenalties(){
         return this.bytTotalPenalties;
+    }
+    
+    public static short getAllianceCount(){
+        return Alliance.shrNumAlliances;
     }
 }

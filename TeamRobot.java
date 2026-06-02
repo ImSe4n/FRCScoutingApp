@@ -7,8 +7,11 @@
  */
 public class TeamRobot extends Robot
 {
+    //instance variables
+    //not particularly useful, but might use in future
     private boolean boolCanPlayDefence;
     
+    //constructor
     public TeamRobot(short shrTeamNumber, short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, boolean boolCanPlayDefence){
         super(shrTeamNumber);
         super.setAutoFuelCount(shrAutoFuelCount);
@@ -18,17 +21,20 @@ public class TeamRobot extends Robot
         this.boolCanPlayDefence = boolCanPlayDefence;
     }
     
+    //overriden method for team robot (basically same as super, prolly gonna remove)
     @Override
     public short getIndividualScore(){
         short totalMatchPoints = (short)(super.getAutoFuelCount() + super.getTeleFuelCount() + super.getEndFuelCount() + super.getClimbLevel()*10);
         return totalMatchPoints;
     }
     
+    //toString
     @Override
     public String toString(){
         return super.toString() + String.format(" | Defence: %s", this.boolCanPlayDefence); //can format later using yes/no
     }
     
+    //gettters and setters
     public boolean getCanPlayDefence(){
         return this.boolCanPlayDefence;
     }
