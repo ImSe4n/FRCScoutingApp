@@ -36,8 +36,19 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     private DefaultTableModel dashboardModel;
     
     //match predictor tab
+    private JComboBox<String> redRobot1;
+    private JComboBox<String> redRobot2;
+    private JComboBox<String> redRobot3;
+    private JComboBox<String> blueRobot1;
+    private JComboBox<String> blueRobot2;
+    private JComboBox<String> blueRobot3;
+    private JTextArea txtMatchResult;
     
     //picklist tab
+    private JSlider sldFuelWeight;
+    private JSlider sldClimbWeight;
+    private JSlider sldDefenceWeight;
+    private DefaultTableModel picklistModel;
     
     //constructor
     public ScoutingApp(){
@@ -178,11 +189,53 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     private JPanel matchPredictorTab(){
-        return null;
+        JPanel matchPredictorTab = new JPanel(new BorderLayout());
+        
+        JPanel selectionPanel = new JPanel(new GridLayout(6,2,10,5));
+        selectionPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        
+        this.redRobot1 = new JComboBox<String>();
+        this.redRobot2 = new JComboBox<String>();
+        this.redRobot3 = new JComboBox<String>();
+        this.blueRobot1 = new JComboBox<String>();
+        this.blueRobot2 = new JComboBox<String>();
+        this.blueRobot3 = new JComboBox<String>();
+        
+        selectionPanel.add(new JLabel("Red Alliance 1: "));
+        selectionPanel.add(this.redRobot1);
+        selectionPanel.add(new JLabel("Red Alliance 2: "));
+        selectionPanel.add(this.redRobot2);
+        selectionPanel.add(new JLabel("Red Alliance 3: "));
+        selectionPanel.add(this.redRobot3);
+        selectionPanel.add(new JLabel("Blue Alliance 1: "));
+        selectionPanel.add(this.blueRobot1);
+        selectionPanel.add(new JLabel("Blue Alliance 2: "));
+        selectionPanel.add(this.blueRobot2);
+        selectionPanel.add(new JLabel("Blue Alliance 3: "));
+        selectionPanel.add(this.blueRobot3);
+        
+        this.txtMatchResult = new JTextArea(5,40);
+        this.txtMatchResult.setEditable(false);
+        this.txtMatchResult.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        
+        JButton btnSimulateMatch = new JButton("Simulate Match");
+        btnSimulateMatch.addActionListener(e -> this.simulateMatch());
+        
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
+        bottomPanel.add(btnSimulateMatch, BorderLayout.NORTH);
+        bottomPanel.add(new JScrollPane(this.txtMatchResult), BorderLayout.CENTER);
+        
+        matchPredictorTab.add(selectionPanel, BorderLayout.NORTH);
+        matchPredictorTab.add(bottomPanel, BorderLayout.CENTER);
+        
+        return matchPredictorTab;
     }
     
     private JPanel picklistTab(){
-        return null;
+        JPanel picklistTab = new JPanel(new BorderLayout());
+        
+        return picklistTab;
     }
     
     //event handler methods
