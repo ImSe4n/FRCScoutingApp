@@ -7,12 +7,29 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
-public class ScoutingApp
+public class ScoutingApp extends JFrame //inhertie from JFrame since it is the app window
 {
+    //instance variables
+    private Tournament tournament;
+    
     //gui variables
     
     //scouting tab
+    private JTextField txtTeamNumber;
+    private JSpinner spnAutoFuel;
+    private JSpinner spnTeleFuel;
+    private JSpinner spnEndFuel;
+    private JSpinner spnclimbLevel;
+    private JSpinner spnDefenceime;
+    private JSpinner spnMinorPenalties;
+    private JSpinner spnMajorPenalties;
+    private JSpinner spnDriverRating;
+    private JSpinner spnAccuracyRating;
+    private JTextField txtNotes;
+    private JLabel lblEntryStatus;
     
     //dashboard tab
     
@@ -20,29 +37,117 @@ public class ScoutingApp
     
     //picklist tab
     
+    //constructor
     public ScoutingApp(){
+        this.tournament = new Tournament();
         
-    }
-    
-    public void run(){
+        this.setTitle("FRC Scouting App");
+        this.setSize(900,600);
         
-    }
-    
-    private void mainWindow(){
-        JFrame mainWindow = new JFrame("FRC Scouting App");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
         
-        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setSize(600,400);
+        JTabbedPane tabbedApp = new JTabbedPane();
+        tabbedApp.addTab("Scouting Data Entry Tab", this.scoutEntryTab());
+        tabbedApp.addTab("Dashboard Tab", this.dashboardTab());
+        tabbedApp.addTab("Match Predictor Tab", this.matchPredictorTab());
+        tabbedApp.addTab("Pick List Tab", this.picklistTab());
         
-        JTabbedPane tabPanel = new JTabbedPane();
+        //automatically refresh the combo boxes when the user goes to the picklist
+        //so that the new scouted robots automatically show up
+        tabbedApp.addChangeListener(e -> {
+            if (tabbedApp.getSelectedIndex() == 2){
+                this.refreshComboBoxes();
+            }
+        });
         
+        //options in the file dropdown
+        JMenuBar menuBar = new JMenuBar();
         
+        JMenu fileMenu = new JMenu("File");
+        
+        JMenuItem saveItem = new JMenuItem("Save");
+        JMenuItem loadItem = new JMenuItem("Load");
+        
+        saveItem.addActionListener(e -> this.saveFile());
+        loadItem.addActionListener(e -> this.loadFile());
+        
+        fileMenu.add(saveItem);
+        fileMenu.add(loadItem);
+        
+        menuBar.add(fileMenu);
+        this.setJMenuBar(menuBar);
+        
+        //autosave the data if the user accidentally closes the window
+        this.addWindowListener(new WindowAdapter(){
+            public void WindowClosing(WindowEvent e){
+                ScoutingApp.this.tournament.saveToFile("ScoutingData.txt");
+            }
+        });
+        
+        //autoload any data that has been previously saved when opening the app
+        this.tournament.loadFromFile("ScoutingData.txt");
+        
+        this.refreshDashboard();
+        
+        this.add(tabbedApp);
+        this.setVisible(true);
     }
     
     private JPanel scoutEntryTab(){
-        JPanel scoutEntryTab = new JPanel();
+        JPanel scoutEntryTab = new JPanel(new BorderLayout());
+        JPanel formPanel = new JPanel(new GridLayout(0,2,10,5));
         
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10,010,10,10));
         
+        this.txtTeamNumber = new JTextField();
+        this.spnAutoFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
+        this.spnTeleFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
+        this.spnEndFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
+        this.spnclimbLevel = new JSpinner(new SpinnerNumberModel(0,0,3,1));
+        this.spnDefenceime = new JSpinner(new SpinnerNumberModel(0,0,150,1));
+        this.spnMinorPenalties = new JSpinner(new SpinnerNumberModel(0,0,20,1));
+        this.spnMajorPenalties = new JSpinner(new SpinnerNumberModel(0,0,10,1));
+        this.spnDriverRating = new JSpinner(new SpinnerNumberModel(1,1,5,1));
+        this.spnAccuracyRating = new JSpinner(new SpinnerNumberModel(1,1,5,1));
+        this.txtNotes = new JTextField();
+        
+        formPanel.add(new JLabel("Team Number:"));
+        formPanel.add(this.txtTeamNumber);
+        formPanel.add(new JLabel("Auto Fuel Count:"));
+        formPanel.add(this.spnAutoFuel);
+        formPanel.add(new JLabel("Tele Fuel Count:"));
+        formPanel.add(this.spnTeleFuel);
+        formPanel.add(new JLabel("Endgame Fuel Count:"));
+        formPanel.add(this.spnEndFuel);
+        formPanel.add(new JLabel("Climb Level (0-3):"));
+        formPanel.add(this.spnclimbLevel);
+        formPanel.add(new JLabel("Defence Time (in seconds):"));
+        formPanel.add(this.spnDefenceime);
+        formPanel.add(new JLabel("Minor Penalties"));
+        formPanel.add(this.spnMinorPenalties);
+        formPanel.add(new JLabel("Major Penalties:"));
+        formPanel.add(this.spnMajorPenalties);
+        formPanel.add(new JLabel("Driver Rating (1-5):"));
+        formPanel.add(this.spnDriverRating);
+        formPanel.add(new JLabel("Accuracy Rating (1-5):"));
+        formPanel.add(this.spnAccuracyRating);
+        formPanel.add(new JLabel("Notes:"));
+        formPanel.add(this.txtNotes);
+        
+        this.lblEntryStatus = new JLabel(" ");
+        
+        JButton btnSubmit = new JButton("Submit Scouting Data");
+        btnSubmit.addActionListener(e -> this.scoutedBotSubmit());
+        
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
+        
+        bottomPanel.add(btnSubmit, BorderLayout.CENTER);
+        bottomPanel.add(this.lblEntryStatus, BorderLayout.SOUTH);
+        
+        scoutEntryTab.add(new JScrollPane(formPanel), BorderLayout.CENTER);
+        scoutEntryTab.add(bottomPanel, BorderLayout.SOUTH);
         
         return scoutEntryTab;
     }
@@ -81,6 +186,10 @@ public class ScoutingApp
     }
     
     private void refreshDashboard(){
+        
+    }
+    
+    private void refreshComboBoxes(){
         
     }
 

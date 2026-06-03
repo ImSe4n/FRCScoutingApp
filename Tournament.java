@@ -252,8 +252,9 @@ public class Tournament
             objectReader.close();
         }
         catch (IOException e){
-            System.out.println("Error handling file");
+            System.out.println("Error handling file/No file exists, please enter some scouting data.");
         }
+        
         catch (ClassNotFoundException e){
             this.scoutRobots = new ArrayList<ScoutedRobot>();
         }
