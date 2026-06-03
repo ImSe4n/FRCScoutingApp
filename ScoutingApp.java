@@ -6,6 +6,7 @@
  */
 
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     private JLabel lblEntryStatus;
     
     //dashboard tab
+    private DefaultTableModel dashboardModel;
     
     //match predictor tab
     
@@ -153,7 +155,26 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     private JPanel dashboardTab(){
-        return null;
+        JPanel dashboardTab = new JPanel(new BorderLayout());
+        
+        String[] strStatColumns = {"Team #", "Avg Auto", "Avg Tele", "Avg End", "Avg Score", "# Matches Played"};
+        
+        this.dashboardModel = new DefaultTableModel(strStatColumns, 0){
+            public boolean isCellEditable(int intRow, int intCol){
+                return false;
+            }
+        };
+        
+        JTable dashboardTable = new JTable(this.dashboardModel);
+        dashboardTable.setAutoCreateRowSorter(true);
+        
+        JButton btnRefresh = new JButton("Refresh");
+        btnRefresh.addActionListener(e -> this.refreshDashboard());
+        
+        dashboardTab.add(new JScrollPane(dashboardTable), BorderLayout.CENTER);
+        dashboardTab.add(btnRefresh, BorderLayout.SOUTH);
+        
+        return dashboardTab;
     }
     
     private JPanel matchPredictorTab(){
