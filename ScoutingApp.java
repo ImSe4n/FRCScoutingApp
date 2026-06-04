@@ -235,6 +235,51 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     private JPanel picklistTab(){
         JPanel picklistTab = new JPanel(new BorderLayout());
         
+        JPanel weightPanel = new JPanel(new GridLayout(3,2,10,5));
+        weightPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        
+        this.sldFuelWeight = new JSlider(0,10,5);
+        this.sldFuelWeight.setMajorTickSpacing(2);
+        this.sldFuelWeight.setPaintTicks(true);
+        this.sldFuelWeight.setPaintLabels(true);
+        
+        this.sldClimbWeight = new JSlider(0,10,5);
+        this.sldClimbWeight.setMajorTickSpacing(2);
+        this.sldClimbWeight.setPaintTicks(true);
+        this.sldClimbWeight.setPaintLabels(true);
+        
+        this.sldDefenceWeight = new JSlider(0,10,5);
+        this.sldDefenceWeight.setMajorTickSpacing(2);
+        this.sldDefenceWeight.setPaintTicks(true);
+        this.sldDefenceWeight.setPaintLabels(true);
+        
+        weightPanel.add(new JLabel("Fuel Scoring Weight:"));
+        weightPanel.add(this.sldFuelWeight);
+        weightPanel.add(new JLabel("Climb Points Weight:"));
+        weightPanel.add(this.sldClimbWeight);
+        weightPanel.add(new JLabel("Defence Effectiveness Weight:"));
+        weightPanel.add(this.sldDefenceWeight);
+        
+        String[] statColumns = {"Rank", "Team #", "Weighted Score", "Matches Scouted"};
+        
+        this.picklistModel = new DefaultTableModel(statColumns, 0){
+            public boolean isCellEditable(int intRow, int intCol){
+                return false;
+            }
+        };
+        
+        JTable picklistTable = new JTable(this.picklistModel);
+        
+        JButton btnGenerate = new JButton("Generate Picklist");
+        btnGenerate.addActionListener(e -> this.generatePicklist());
+        
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(weightPanel, BorderLayout.CENTER);
+        topPanel.add(btnGenerate, BorderLayout.SOUTH);
+        
+        picklistTab.add(topPanel, BorderLayout.NORTH);
+        picklistTab.add(new JScrollPane(picklistTable), BorderLayout.CENTER);
+        
         return picklistTab;
     }
     
@@ -251,14 +296,6 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
     }
     
-    private void saveFile(){
-        
-    }
-    
-    private void loadFile(){
-        
-    }
-    
     private void refreshDashboard(){
         
     }
@@ -267,5 +304,33 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
     }
 
-
+    private void saveFile(){
+        JFileChooser fileChooser = new JFileChooser();
+        
+        int intResult = fileChooser.showOpenDialog(this);
+        
+        if (intResult == JFileChooser.APPROVE_OPTION){
+            String strFileName = fileChooser.getSelectedFile().getAbsolutePath();
+        
+            this.tournament.saveToFile(strFileName);
+        
+            JOptionPane.showMessageDialog(this, "File Saved Successfully!");
+        }
+    }
+    
+    private void loadFile(){
+        JFileChooser fileChooser = new JFileChooser();
+        
+        int intResult = fileChooser.showOpenDialog(this);
+        
+        if (intResult == JFileChooser.APPROVE_OPTION){
+            String strFileName = fileChooser.getSelectedFile().getAbsolutePath();
+        
+            this.tournament.loadFromFile(strFileName);
+        
+            this.refreshDashboard();
+        
+            JOptionPane.showMessageDialog(this, "File Loaded Successfully!");
+        }
+    }
 }
