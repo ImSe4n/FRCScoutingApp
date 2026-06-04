@@ -94,11 +94,6 @@ public class ScoutedRobot extends Robot
         this.shrMatchesObserved++;
     }
     
-    public String convertDataToCSV(){
-        String strSafeNotes = this.strNotes.replace(",", ";"); //prevent field boundary breaks
-        return String.format("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s", super.getTeamNumber(), super.getAutoFuelCount(), super.getTeleFuelCount(), super.getEndFuelCount(), super.getClimbLevel(), this.bytDefenceTime, this.bytMinorPenalties, this.bytMajorPenalties, this.bytDriverRating, this.bytAccuracyRating, this.shrMatchesObserved, strSafeNotes);
-    }
-    
     //getters and setters
     public short getMatchesObserved(){
         return this.shrMatchesObserved;

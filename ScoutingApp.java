@@ -23,7 +23,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     private JSpinner spnAutoFuel;
     private JSpinner spnTeleFuel;
     private JSpinner spnEndFuel;
-    private JSpinner spnclimbLevel;
+    private JSpinner spnClimbLevel;
     private JSpinner spnDefenceime;
     private JSpinner spnMinorPenalties;
     private JSpinner spnMajorPenalties;
@@ -117,7 +117,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.spnAutoFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
         this.spnTeleFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
         this.spnEndFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
-        this.spnclimbLevel = new JSpinner(new SpinnerNumberModel(0,0,3,1));
+        this.spnClimbLevel = new JSpinner(new SpinnerNumberModel(0,0,3,1));
         this.spnDefenceime = new JSpinner(new SpinnerNumberModel(0,0,150,1));
         this.spnMinorPenalties = new JSpinner(new SpinnerNumberModel(0,0,20,1));
         this.spnMajorPenalties = new JSpinner(new SpinnerNumberModel(0,0,10,1));
@@ -134,7 +134,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         formPanel.add(new JLabel("Endgame Fuel Count:"));
         formPanel.add(this.spnEndFuel);
         formPanel.add(new JLabel("Climb Level (0-3):"));
-        formPanel.add(this.spnclimbLevel);
+        formPanel.add(this.spnClimbLevel);
         formPanel.add(new JLabel("Defence Time (in seconds):"));
         formPanel.add(this.spnDefenceime);
         formPanel.add(new JLabel("Minor Penalties"));
@@ -285,14 +285,126 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     
     //event handler methods
     private void scoutedBotSubmit(){
+        // spnAutoFuel;
+        // private JSpinner spnTeleFuel;
+        // private JSpinner spnEndFuel;
+        // private JSpinner spnClimbLevel;
+        // private JSpinner spnDefenceime;
+        // private JSpinner spnMinorPenalties;
+        // private JSpinner spnMajorPenalties;
+        // private JSpinner spnDriverRating;
+        // private JSpinner spnAccuracyRating;
+        // private JTextField txtNotes
         
+        try {
+            short shrTeamNumber = Short.parseShort(this.txtTeamNumber.getText());
+            short shrAutoFuel = (short)this.spnAutoFuel.getValue();
+            short shrTeleFuel = (short)this.spnTeleFuel.getValue();
+            short shrEndFuel = (short)this.spnEndFuel.getValue();
+            byte bytClimbLevel = (byte)this.spnClimbLevel.getValue();
+            byte bytDefenceTime = (byte)this.spnDefenceime.getValue();
+            byte bytMinorPenalties = (byte)this.spnMinorPenalties.getValue();
+            byte bytMajorPenalties = (byte)this.spnMajorPenalties.getValue();
+            byte bytDriverDrating = (byte)this.spnDriverRating.getValue();
+            byte bytAccuracyRating = (byte)this.spnAccuracyRating.getValue();
+            String strNotes = this.txtNotes.getText();
+            
+            //find robot and if its not scouted yet, then create an empty robot object
+            ScoutedRobot robot = this.tournament.findRobot(shrTeamNumber);
+            
+            if (robot == null){
+                this.tournament.addRobot(shrTeamNumber);
+                
+                robot = this.tournament.findRobot(shrTeamNumber);
+            }
+            
+            robot.addMatchObservation(shrAutoFuel, shrTeleFuel, shrEndFuel, bytClimbLevel, bytDefenceTime, bytMinorPenalties, bytMajorPenalties, bytDriverDrating, bytAccuracyRating);
+            robot.setNotes(strNotes);
+            
+            this.lblEntryStatus.setText("Team " + shrTeamNumber + " updated. Observations: " + robot.getMatchesObserved());
+            
+            //reset the form to its defaults
+            this.txtTeamNumber.setText("");
+            this.txtNotes.setText("");
+            this.spnAutoFuel.setValue(0);
+            this.spnTeleFuel.setValue(0);
+            this.spnEndFuel.setValue(0);
+            this.spnClimbLevel.setValue(0);
+            this.spnDefenceime.setValue(0);
+            this.spnMinorPenalties.setValue(0);
+            this.spnMajorPenalties.setValue(0);
+            this.spnDriverRating.setValue(1);
+            this.spnAccuracyRating.setValue(1);
+            
+        } catch (NumberFormatException e){
+            this.lblEntryStatus.setText("Error. Invalid team number.");
+        }
     }
     
     private void simulateMatch(){
-        
+        try {
+            String strRed1 = (String)this.redRobot1.getSelectedItem();
+            String strRed2 = (String)this.redRobot2.getSelectedItem();
+            String strRed3 = (String)this.redRobot3.getSelectedItem();
+            String strBlue1 = (String)this.blueRobot1.getSelectedItem();
+            String strBlue2 = (String)this.blueRobot2.getSelectedItem();
+            String strBlue3 = (String)this.blueRobot3.getSelectedItem();
+            
+            if (strRed1 == null || strRed2 == null || strRed3 == null || strBlue1 == null || strBlue2 == null || strBlue3 == null){
+                this.txtMatchResult.setText("Error. Please add at least 6 robots before simulating the match.");
+                
+                return;
+            }
+            
+            ScoutedRobot red1 = this.tournament.findRobot(Short.parseShort(strRed1));
+            ScoutedRobot red2 = this.tournament.findRobot(Short.parseShort(strRed2));
+            ScoutedRobot red3 = this.tournament.findRobot(Short.parseShort(strRed3));
+            ScoutedRobot blue1 = this.tournament.findRobot(Short.parseShort(strBlue1));
+            ScoutedRobot blue2 = this.tournament.findRobot(Short.parseShort(strBlue2));
+            ScoutedRobot blue3 = this.tournament.findRobot(Short.parseShort(strBlue3));
+            
+            if (red1 == null || red2 == null || red3 == null || blue1 == null || blue2 == null || blue3 == null){
+                this.txtMatchResult.setText("Error. One or more robots do not exist in the current data.");
+                
+                return;
+            }
+            
+            Alliance redAlliance = new Alliance(red1, red2, red3);
+            Alliance blueAlliance = new Alliance(blue1, blue2, blue3);
+            
+            Match match = new Match(redAlliance, blueAlliance, (byte)0);
+            
+            this.txtMatchResult.setText(match.getGameSummary());
+        } catch (NumberFormatException e){
+            this.txtMatchResult.setText("Error. Invalid team number in selection.");
+        }
     }
     
     private void generatePicklist(){
+        this.tournament.sortByScore();
+        
+        ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
+        
+        byte bytFuelWeight = (byte)this.sldFuelWeight.getValue();
+        byte bytClimbWeight = (byte)this.sldClimbWeight.getValue();
+        byte bytDefenceWeight = (byte)this.sldDefenceWeight.getValue();
+        
+        this.picklistModel.setRowCount(0);
+        
+        for (int i = 0; i < scoutRobots.size(); i++){
+            ScoutedRobot robot = scoutRobots.get(i);
+            
+            short shrFuelScore = (short)(robot.getAutoFuelCount() + robot.getTeleFuelCount() + robot.getEndFuelCount());
+            short shrClimbScore = (short)(robot.getClimbLevel() * 10);
+            short shrDefenceScore = (short)(robot.getDefenceTime());
+            
+            //apply slider weights to each score component
+            short shrWeightedScore = (short)((shrFuelScore * bytFuelWeight) + (shrClimbScore * bytClimbWeight) + (shrDefenceScore * bytDefenceWeight));
+            
+            Object[] statRow = {i+1, robot.getTeamNumber(), shrWeightedScore, robot.getMatchesObserved()};
+            
+            this.picklistModel.addRow(statRow);
+        }
         
     }
     
