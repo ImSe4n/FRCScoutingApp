@@ -2,13 +2,13 @@
 FRC REBUILT 2026 — Scout Pro  |  FastAPI backend
 Run: uvicorn main:app --reload --port 8000
 """
-import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine, Base
 from routers import tba, scouting, analytics
+from routers import auth as auth_router
 
 
 @asynccontextmanager
@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="FRC REBUILT 2026 — Scout Pro API",
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -32,11 +32,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(tba.router,       prefix="/api/tba",       tags=["TBA"])
-app.include_router(scouting.router,  prefix="/api/scout",     tags=["Scouting"])
-app.include_router(analytics.router, prefix="/api/analytics", tags=["Analytics"])
+app.include_router(auth_router.router, prefix="/api/auth",      tags=["Auth"])
+app.include_router(tba.router,         prefix="/api/tba",        tags=["TBA"])
+app.include_router(scouting.router,    prefix="/api/scout",      tags=["Scouting"])
+app.include_router(analytics.router,   prefix="/api/analytics",  tags=["Analytics"])
 
 
 @app.get("/")
 async def root():
-    return {"app": "FRC REBUILT 2026 Scout Pro", "version": "1.0.0", "year": 2026}
+    return {"app": "FRC REBUILT 2026 Scout Pro", "version": "2.0.0", "year": 2026}

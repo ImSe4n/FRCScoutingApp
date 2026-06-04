@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { analytics } from '../api/client'
+import { analytics, tba } from '../api/client'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { ListOrdered, Download, RefreshCw } from 'lucide-react'
+import { ListOrdered, Download } from 'lucide-react'
 
-function Slider({ label, value, onChange, color = 'bg-blue-600' }) {
+function Slider({ label, value, onChange }) {
   return (
     <div>
       <div className="flex justify-between text-xs text-slate-400 mb-1">
@@ -21,99 +21,95 @@ export default function PickList() {
   const [weights, setWeights] = useState({
     w_auto: 1.0, w_tele: 1.0, w_climb: 1.0, w_defence: 0.5, w_driver: 0.5,
   })
+  const [events, setEvents]     = useState([])
   const [eventKey, setEventKey] = useState('')
-  const [list, setList] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [list, setList]         = useState([])
+  const [loading, setLoading]   = useState(false)
   const [generated, setGenerated] = useState(false)
 
-  function setW(key) { return v => setWeights(prev => ({ ...prev, [key]: v })) }
+  useEffect(() => {
+    tba.events(2026).then(r => setEvents(r.data ?? [])).catch(() => {})
+  }, [])
+
+  function setW(key) { return v => setWeights(p => ({ ...p, [key]: v })) }
 
   async function generate() {
     setLoading(true)
     try {
       const r = await analytics.picklist(weights, eventKey || null)
-      setList(r.data ?? [])
-      setGenerated(true)
-    } catch {
-      setList([])
-    } finally {
-      setLoading(false)
-    }
+      setList(r.data ?? []); setGenerated(true)
+    } catch { setList([]) }
+    finally { setLoading(false) }
   }
 
   function exportCSV() {
-    const header = 'Rank,Team,Weighted Score,Avg Score,Matches,TBA OPR'
+    const header = 'Rank,Team,Weighted Score,Avg Score,Avg Total Fuel,Avg Climb,Matches,TBA OPR'
     const rows = list.map(t =>
-      `${t.rank},${t.team_number},${t.weighted_score},${t.avg_score?.toFixed(2)},${t.match_count},${t.tba_opr?.toFixed(2) ?? '—'}`
+      `${t.rank},${t.team_number},${t.weighted_score},${t.avg_score?.toFixed(2)},${t.avg_total_fuel?.toFixed(2)},${Math.round(t.avg_climb_level ?? 0)},${t.match_count},${t.tba_opr?.toFixed(2) ?? '—'}`
     )
     const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = 'picklist_2026.csv'; a.click()
-    URL.revokeObjectURL(url)
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob); a.download = 'picklist_2026.csv'; a.click()
   }
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Pick List Generator</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Weighted ranking blending scout data with TBA OPR — REBUILT 2026
-          </p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white">Pick List Generator</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Scout data × 0.7 + TBA OPR × 0.3 · sorted by merge sort</p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-5">
-        {/* Weight sliders */}
         <div className="col-span-2 card">
           <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Scoring Weights</h2>
           <div className="space-y-4">
-            <Slider label="Autonomous" value={weights.w_auto} onChange={setW('w_auto')} />
-            <Slider label="Teleop" value={weights.w_tele} onChange={setW('w_tele')} />
-            <Slider label="Climb / Endgame" value={weights.w_climb} onChange={setW('w_climb')} />
-            <Slider label="Defence Capability" value={weights.w_defence} onChange={setW('w_defence')} />
-            <Slider label="Driver Skill" value={weights.w_driver} onChange={setW('w_driver')} />
+            <Slider label="Auto Fuel"       value={weights.w_auto}    onChange={setW('w_auto')} />
+            <Slider label="Teleop Fuel"     value={weights.w_tele}    onChange={setW('w_tele')} />
+            <Slider label="Climb (×10pts)"  value={weights.w_climb}   onChange={setW('w_climb')} />
+            <Slider label="Defence"         value={weights.w_defence} onChange={setW('w_defence')} />
+            <Slider label="Driver Skill"    value={weights.w_driver}  onChange={setW('w_driver')} />
           </div>
         </div>
 
-        {/* Options */}
         <div className="space-y-3">
           <div className="card">
-            <label className="text-xs text-slate-500 mb-1 block">Event Key (optional)</label>
-            <input className="input text-sm" placeholder="e.g. 2026onto"
-              value={eventKey} onChange={e => setEventKey(e.target.value)} />
-            <p className="text-xs text-slate-600 mt-1">Adds TBA OPR to blend</p>
+            <label className="text-xs text-slate-500 mb-1 block">Event</label>
+            <select className="input text-sm" value={eventKey} onChange={e => setEventKey(e.target.value)}>
+              <option value="">All events</option>
+              {events.map(ev => <option key={ev.key} value={ev.key}>{ev.name} · {ev.key}</option>)}
+            </select>
+            <p className="text-xs text-slate-600 mt-1">Adds TBA OPR when set</p>
           </div>
-          <div className="card space-y-2 text-xs text-slate-500">
-            <p><span className="text-slate-300 font-medium">Formula</span></p>
-            <p>Scout data × 0.7 + TBA OPR × 0.3</p>
-            <p>Sorted by weighted score (merge sort)</p>
+          <div className="card text-xs text-slate-500 space-y-1">
+            <p className="text-slate-300 font-medium">Score Formula</p>
+            <p>fuel_score × accuracy</p>
+            <p>+ climb_level × 10</p>
+            <p>− penalties</p>
+            <p className="text-slate-600 pt-1">Sorted by merge sort (O n log n)</p>
           </div>
         </div>
       </div>
 
       <button onClick={generate} disabled={loading}
         className="btn-primary w-full py-3 text-base font-semibold flex items-center justify-center gap-2 mb-5">
-        <ListOrdered size={18} />
-        {loading ? 'Generating...' : 'Generate Pick List'}
+        <ListOrdered size={18} />{loading ? 'Generating...' : 'Generate Pick List'}
       </button>
 
-      {loading && <LoadingSpinner text="Generating pick list..." />}
+      {loading && <LoadingSpinner />}
 
       {generated && !loading && (
         <>
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm text-slate-400">{list.length} teams ranked</p>
             {list.length > 0 && (
-              <button onClick={exportCSV} className="btn-ghost flex items-center gap-2 text-xs">
+              <button onClick={exportCSV} className="btn-ghost flex items-center gap-1 text-xs">
                 <Download size={13} /> Export CSV
               </button>
             )}
           </div>
-
           {list.length === 0 ? (
             <div className="card text-center py-8 text-slate-500">
-              No scout data found. Add observations on the Scout Entry page first.
+              No scout data found. Add observations first.
             </div>
           ) : (
             <div className="card overflow-x-auto">
@@ -122,10 +118,11 @@ export default function PickList() {
                   <tr className="text-xs text-slate-500 border-b border-slate-800">
                     <th className="text-left pb-2 pr-3">Rank</th>
                     <th className="text-left pb-2 pr-3">Team</th>
-                    <th className="text-right pb-2 pr-3">Weighted Score</th>
+                    <th className="text-right pb-2 pr-3">Weighted</th>
                     <th className="text-right pb-2 pr-3">Avg Score</th>
-                    <th className="text-right pb-2 pr-3">TBA OPR</th>
-                    <th className="text-right pb-2 pr-3">Avg Climb</th>
+                    <th className="text-right pb-2 pr-3">Total Fuel</th>
+                    <th className="text-right pb-2 pr-3">Climb</th>
+                    <th className="text-right pb-2 pr-3">OPR</th>
                     <th className="text-right pb-2">Matches</th>
                   </tr>
                 </thead>
@@ -135,26 +132,15 @@ export default function PickList() {
                       className="border-b border-slate-800/50 hover:bg-slate-800/30">
                       <td className="py-2 pr-3">
                         <span className={`font-bold ${
-                          t.rank === 1 ? 'text-yellow-400' :
-                          t.rank === 2 ? 'text-slate-300' :
-                          t.rank === 3 ? 'text-orange-400' : 'text-slate-500'
-                        }`}>
-                          #{t.rank}
-                        </span>
+                          t.rank===1?'text-yellow-400':t.rank===2?'text-slate-300':t.rank===3?'text-orange-400':'text-slate-500'
+                        }`}>#{t.rank}</span>
                       </td>
                       <td className="py-2 pr-3 text-blue-400 font-bold">{t.team_number}</td>
-                      <td className="py-2 pr-3 text-right text-white font-medium">
-                        {t.weighted_score?.toFixed(2)}
-                      </td>
-                      <td className="py-2 pr-3 text-right text-slate-300">
-                        {t.avg_score?.toFixed(2)}
-                      </td>
-                      <td className="py-2 pr-3 text-right text-yellow-400">
-                        {t.tba_opr?.toFixed(2) ?? '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-right text-slate-400">
-                        L{Math.round(t.avg_climb_level ?? 0)}
-                      </td>
+                      <td className="py-2 pr-3 text-right text-white font-medium">{t.weighted_score?.toFixed(2)}</td>
+                      <td className="py-2 pr-3 text-right text-slate-300">{t.avg_score?.toFixed(2)}</td>
+                      <td className="py-2 pr-3 text-right text-slate-300">{t.avg_total_fuel?.toFixed(1)}</td>
+                      <td className="py-2 pr-3 text-right text-yellow-400">L{Math.round(t.avg_climb_level??0)}</td>
+                      <td className="py-2 pr-3 text-right text-green-400">{t.tba_opr?.toFixed(2)??'—'}</td>
                       <td className="py-2 text-right text-slate-500">{t.match_count}</td>
                     </tr>
                   ))}
