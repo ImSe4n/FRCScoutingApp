@@ -298,15 +298,15 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
         try {
             short shrTeamNumber = Short.parseShort(this.txtTeamNumber.getText());
-            short shrAutoFuel = (short)this.spnAutoFuel.getValue();
-            short shrTeleFuel = (short)this.spnTeleFuel.getValue();
-            short shrEndFuel = (short)this.spnEndFuel.getValue();
-            byte bytClimbLevel = (byte)this.spnClimbLevel.getValue();
-            byte bytDefenceTime = (byte)this.spnDefenceime.getValue();
-            byte bytMinorPenalties = (byte)this.spnMinorPenalties.getValue();
-            byte bytMajorPenalties = (byte)this.spnMajorPenalties.getValue();
-            byte bytDriverDrating = (byte)this.spnDriverRating.getValue();
-            byte bytAccuracyRating = (byte)this.spnAccuracyRating.getValue();
+            short shrAutoFuel = (short)(int)this.spnAutoFuel.getValue();
+            short shrTeleFuel = (short)(int)this.spnTeleFuel.getValue();
+            short shrEndFuel = (short)(int)this.spnEndFuel.getValue();
+            byte bytClimbLevel = (byte)(int)this.spnClimbLevel.getValue();
+            byte bytDefenceTime = (byte)(int)this.spnDefenceime.getValue();
+            byte bytMinorPenalties = (byte)(int)this.spnMinorPenalties.getValue();
+            byte bytMajorPenalties = (byte)(int)this.spnMajorPenalties.getValue();
+            byte bytDriverDrating = (byte)(int)this.spnDriverRating.getValue();
+            byte bytAccuracyRating = (byte)(int)this.spnAccuracyRating.getValue();
             String strNotes = this.txtNotes.getText();
             
             //find robot and if its not scouted yet, then create an empty robot object
@@ -335,6 +335,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             this.spnMajorPenalties.setValue(0);
             this.spnDriverRating.setValue(1);
             this.spnAccuracyRating.setValue(1);
+            
+            this.refreshDashboard();
             
         } catch (NumberFormatException e){
             this.lblEntryStatus.setText("Error. Invalid team number.");
