@@ -297,11 +297,44 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     private void refreshDashboard(){
+        this.dashboardModel.setRowCount(0);
         
+        ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
+        
+        for (ScoutedRobot robot: scoutRobots){
+            Object[] statRow = {
+                robot.getTeamNumber(),
+                robot.getAutoFuelCount(),
+                robot.getTeleFuelCount(),
+                robot.getEndFuelCount(),
+                robot.getIndividualScore(),
+                robot.getMatchesObserved()
+            };
+            
+            this.dashboardModel.addRow(statRow);
+        }
     }
     
     private void refreshComboBoxes(){
+        ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
         
+        this.redRobot1.removeAllItems();
+        this.redRobot2.removeAllItems();
+        this.redRobot3.removeAllItems();
+        this.blueRobot1.removeAllItems();
+        this.blueRobot2.removeAllItems();
+        this.blueRobot3.removeAllItems();
+        
+        for (ScoutedRobot robot: scoutRobots){
+            String strTeamNum = String.valueOf(robot.getTeamNumber());
+            
+            this.redRobot1.addItem(strTeamNum);
+            this.redRobot2.addItem(strTeamNum);
+            this.redRobot3.addItem(strTeamNum);
+            this.blueRobot1.addItem(strTeamNum);
+            this.blueRobot2.addItem(strTeamNum);
+            this.blueRobot3.addItem(strTeamNum);
+        }
     }
 
     private void saveFile(){
