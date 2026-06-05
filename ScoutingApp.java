@@ -10,6 +10,7 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import javax.swing.filechooser.*;
 
 public class ScoutingApp extends JFrame //inhertie from JFrame since it is the app window
 {
@@ -93,10 +94,9 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.setJMenuBar(menuBar);
         
         //autosave the data if the user accidentally closes the window
-        //NOT WORKING...
         this.addWindowListener(new WindowAdapter(){
-            public void WindowClosing(WindowEvent e){
-                tournament.saveToFile("ScoutingData.txt");
+            public void windowClosing(WindowEvent e){
+                ScoutingApp.this.tournament.saveToFile("ScoutingData.txt");
             }
         });
         
@@ -115,6 +115,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
         formPanel.setBorder(BorderFactory.createEmptyBorder(10,010,10,10));
         
+        //use JSpinner for the incrementing stat values
         this.txtTeamNumber = new JTextField();
         this.spnAutoFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
         this.spnTeleFuel = new JSpinner(new SpinnerNumberModel(0,0,999,1));
@@ -127,6 +128,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.spnAccuracyRating = new JSpinner(new SpinnerNumberModel(1,1,5,1));
         this.txtNotes = new JTextField();
         
+        //add each stat to the panel
         formPanel.add(new JLabel("Team Number:"));
         formPanel.add(this.txtTeamNumber);
         formPanel.add(new JLabel("Auto Fuel Count:"));
@@ -150,11 +152,16 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         formPanel.add(new JLabel("Notes:"));
         formPanel.add(this.txtNotes);
         
+        //label status at the bottom of the screen which will either output
+        //a successful scout entry or an error
         this.lblEntryStatus = new JLabel(" ");
         
+        //button to submit scout data
+        //call scoutedBotSubmit when clicked
         JButton btnSubmit = new JButton("Submit Scouting Data");
         btnSubmit.addActionListener(e -> this.scoutedBotSubmit());
         
+        //bottomPanel for the submit button and lblEntryStatus
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5,10,5,10));
         
@@ -325,7 +332,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             
             this.lblEntryStatus.setText("Team " + shrTeamNumber + " updated. Observations: " + robot.getMatchesObserved());
             
-            //reset the form to its defaults
+            //reset the form to its defaults after submitting
             this.txtTeamNumber.setText("");
             this.txtNotes.setText("");
             this.spnAutoFuel.setValue(0);
@@ -460,7 +467,12 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
 
     private void saveFile(){
+        //JFIleChooser for file opener
         JFileChooser fileChooser = new JFileChooser();
+        
+        //only allow users to choose text files
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
+        fileChooser.setFileFilter(filter);
         
         int intResult = fileChooser.showOpenDialog(this);
         
@@ -475,6 +487,10 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     
     private void loadFile(){
         JFileChooser fileChooser = new JFileChooser();
+        
+        //only allow users to choose text files
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
+        fileChooser.setFileFilter(filter);
         
         int intResult = fileChooser.showOpenDialog(this);
         
