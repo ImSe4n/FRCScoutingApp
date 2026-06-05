@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Change this to your backend's IP when running on a real device.
 // For emulator: Android uses 10.0.2.2, iOS simulator uses localhost.
 // For Expo Go on a physical device, use your computer's LAN IP.
-export const API_BASE_URL = 'http://10.0.2.2:8000'; // change to your machine's IP for physical device
+export const API_BASE_URL = 'http://10.32.167.65'; // change to your machine's IP for physical device
 
 const api = axios.create({
   baseURL: API_BASE_URL,
