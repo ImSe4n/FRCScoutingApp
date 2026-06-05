@@ -25,8 +25,8 @@
     "react-native-svg": "15.2.0",
     "react-native-picker-select": "^9.1.3",
     "@expo/vector-icons": "^14.0.2",
-    "nativewind": "^4.0.1",
-    "tailwindcss": "^3.4.3",
+    "nativewind": "^2.0.11",
+    "tailwindcss": "^3.3.2",
     "@react-native-community/slider": "4.5.2"
   },
   "devDependencies": {
