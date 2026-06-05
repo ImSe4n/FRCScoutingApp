@@ -17,7 +17,6 @@ public class Tournament
 {
     //instance variables
     private ArrayList<ScoutedRobot> scoutRobots;
-    private ScoutedRobot[][] matchSchedule;
     private short shrMatchCount;
     
     //maybe have a constant to limit number of matches
@@ -26,7 +25,6 @@ public class Tournament
     //constructor
     public Tournament(){
         this.scoutRobots = new ArrayList<ScoutedRobot>();
-        this.matchSchedule = new ScoutedRobot[50][6]; //assume each tournament has 50 qualification matches (for now)
     }
     
     //add a robot object to the list of scouted robots
@@ -51,26 +49,6 @@ public class Tournament
         }
         catch (NumberFormatException e){
             System.out.println("Invalid team number!");
-        }
-    }
-    
-    //using the robots from the scoutrobots array list, create a new match
-    //this method will be used for the match predictor?
-    public void addMatchToSchedule(short shrMatchIndex, ScoutedRobot red1, ScoutedRobot red2, ScoutedRobot red3, ScoutedRobot blue1, ScoutedRobot blue2, ScoutedRobot blue3){
-        //if the current match index is valid (greater than 0 and not greater than 50/max matches) then add the match to the schedule
-        if (shrMatchIndex >= 0 && shrMatchIndex < this.matchSchedule.length){
-            this.matchSchedule[shrMatchIndex][0] = red1;
-            this.matchSchedule[shrMatchIndex][1] = red2;
-            this.matchSchedule[shrMatchIndex][2] = red3;
-            this.matchSchedule[shrMatchIndex][3] = blue1;
-            this.matchSchedule[shrMatchIndex][4] = blue2;
-            this.matchSchedule[shrMatchIndex][5] = blue3;
-            
-            //increase the match count by the current match index + 1
-            //since match 1 starts at index 0
-            if (shrMatchIndex >= this.shrMatchCount){
-                this.shrMatchCount = (short)(shrMatchIndex + 1);
-            }
         }
     }
     
@@ -272,10 +250,6 @@ public class Tournament
     }
     
     //getters and setters
-    public ScoutedRobot[][] getMatchSchedule(){
-        return this.matchSchedule;
-    }
-    
     public ArrayList<ScoutedRobot> getRobots(){
         return this.scoutRobots;
     }

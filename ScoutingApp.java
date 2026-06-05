@@ -82,6 +82,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         JMenuItem saveItem = new JMenuItem("Save");
         JMenuItem loadItem = new JMenuItem("Load");
         
+        //add an action listener so the saveFile and loadFile methods will run when the menu items are clicked
         saveItem.addActionListener(e -> this.saveFile());
         loadItem.addActionListener(e -> this.loadFile());
         
@@ -92,9 +93,10 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.setJMenuBar(menuBar);
         
         //autosave the data if the user accidentally closes the window
+        //NOT WORKING...
         this.addWindowListener(new WindowAdapter(){
             public void WindowClosing(WindowEvent e){
-                ScoutingApp.this.tournament.saveToFile("ScoutingData.txt");
+                tournament.saveToFile("ScoutingData.txt");
             }
         });
         
@@ -403,6 +405,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             //apply slider weights to each score component
             short shrWeightedScore = (short)((shrFuelScore * bytFuelWeight) + (shrClimbScore * bytClimbWeight) + (shrDefenceScore * bytDefenceWeight));
             
+            //need to find a way to sort the weighted scores so the ranks match the correct robot
+            
             Object[] statRow = {i+1, robot.getTeamNumber(), shrWeightedScore, robot.getMatchesObserved()};
             
             this.picklistModel.addRow(statRow);
@@ -411,11 +415,15 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     private void refreshDashboard(){
+        //remove all rows to reset the dashboard
         this.dashboardModel.setRowCount(0);
         
         ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
         
+        //loop through the current robot array list
         for (ScoutedRobot robot: scoutRobots){
+            //for each robot, get their stats
+            
             Object[] statRow = {
                 robot.getTeamNumber(),
                 robot.getAutoFuelCount(),
