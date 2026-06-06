@@ -29,6 +29,7 @@
       "expo-router"
     ],
     "scheme": "frcscoutpro",
+    "newArchEnabled": false,
     "experiments": {
       "typedRoutes": true
     }
