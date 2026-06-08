@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { analyticsAPI } from '../../api/client';
 
 interface WeightConfig {
@@ -11,6 +10,47 @@ interface WeightConfig {
   climb_weight: number;
   fuel_weight: number;
   defence_weight: number;
+}
+
+function WeightSlider({
+  label, colorClass, value, onChange,
+}: {
+  label: string;
+  colorClass: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const step = (delta: number) => {
+    const next = Math.min(1, Math.max(0, Math.round((value + delta) * 100) / 100));
+    onChange(next);
+  };
+  const pct = (value * 100).toFixed(0);
+  const barWidth = `${pct}%`;
+  return (
+    <View className="mb-4">
+      <View className="flex-row justify-between mb-2">
+        <Text className={`text-sm font-medium ${colorClass}`}>{label}</Text>
+        <Text className="text-white text-sm font-mono">{pct}%</Text>
+      </View>
+      <View className="h-2 bg-slate-700 rounded-full mb-2 overflow-hidden">
+        <View className="h-full bg-blue-500 rounded-full" style={{ width: barWidth as any }} />
+      </View>
+      <View className="flex-row gap-2">
+        <TouchableOpacity
+          onPress={() => step(-0.05)}
+          className="flex-1 bg-slate-700 rounded-lg py-1 items-center"
+        >
+          <Text className="text-white font-bold text-lg">−</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => step(0.05)}
+          className="flex-1 bg-slate-700 rounded-lg py-1 items-center"
+        >
+          <Text className="text-white font-bold text-lg">+</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 export default function PickList() {
@@ -38,8 +78,8 @@ export default function PickList() {
     }
   };
 
-  const setW = (key: keyof WeightConfig, val: number) =>
-    setWeights((w) => ({ ...w, [key]: Math.round(val * 100) / 100 }));
+  const setW = (key: keyof WeightConfig) => (val: number) =>
+    setWeights((w) => ({ ...w, [key]: val }));
 
   const weightRows: { key: keyof WeightConfig; label: string; color: string }[] = [
     { key: 'scout_weight', label: 'Scout Score', color: 'text-blue-400' },
@@ -60,26 +100,16 @@ export default function PickList() {
     <ScrollView className="flex-1 bg-slate-900" contentContainerStyle={{ padding: 16 }}>
       <Text className="text-xl font-bold text-white mt-12 mb-4">Pick List Generator</Text>
 
-      {/* Weight Sliders */}
       <View className="bg-slate-800 rounded-xl p-4 mb-4">
         <Text className="text-slate-300 font-semibold mb-4">Scoring Weights</Text>
         {weightRows.map(({ key, label, color }) => (
-          <View key={key} className="mb-4">
-            <View className="flex-row justify-between mb-1">
-              <Text className={`text-sm ${color}`}>{label}</Text>
-              <Text className="text-white text-sm font-mono">{(weights[key] * 100).toFixed(0)}%</Text>
-            </View>
-            <Slider
-              minimumValue={0}
-              maximumValue={1}
-              step={0.05}
-              value={weights[key]}
-              onValueChange={(v) => setW(key, v)}
-              minimumTrackTintColor="#3b82f6"
-              maximumTrackTintColor="#334155"
-              thumbTintColor="#3b82f6"
-            />
-          </View>
+          <WeightSlider
+            key={key}
+            label={label}
+            colorClass={color}
+            value={weights[key]}
+            onChange={setW(key)}
+          />
         ))}
       </View>
 
@@ -93,7 +123,6 @@ export default function PickList() {
           : <Text className="text-white font-bold text-base">Generate Pick List</Text>}
       </TouchableOpacity>
 
-      {/* Results */}
       {generated && picklist.length === 0 && (
         <View className="bg-slate-800 rounded-xl p-8 items-center">
           <Text className="text-slate-500">No data — submit some scout entries first</Text>
