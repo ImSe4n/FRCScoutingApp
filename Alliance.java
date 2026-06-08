@@ -1,9 +1,9 @@
 
 /**
- * Write a description of class Alliance here.
+ * A competitive match alliance consisting of up to three robots
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Sean Nie
+ * @version 2026-06-08
  */
 
 //array list for each alliance of robots
@@ -21,6 +21,8 @@ public class Alliance
     private ArrayList<Robot> robots;
     
     //overloaded constructor 1
+    //initializes an alliance using three unique robots
+    //increments the global alliance counter and computes initial aggregates
     public Alliance(Robot robo1, Robot robo2, Robot robo3){
         this.robots = new ArrayList<Robot>();
         this.robots.add(robo1);
@@ -31,6 +33,7 @@ public class Alliance
     }
     
     //overloaded constructor 2
+    //initializes an alliance using a pre-existing list of robots
     public Alliance(ArrayList<Robot> robots){
         this.robots = new ArrayList<Robot>(robots);
         Alliance.shrNumAlliances++;
@@ -38,7 +41,7 @@ public class Alliance
     }
     
     //calculate the score of an alliance
-    //by add the score of each individual robot
+    //by adding the score of each individual robot
     public short calculateTotalScore(){
         short totalAllianceScore = 0;
         

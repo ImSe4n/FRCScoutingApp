@@ -1,9 +1,10 @@
 
 /**
- * Write a description of class TeamRobot here.
+ * A specific robot profile designated for the user's own team strategies
+ * Extends robot to initialize a team robot with its core performance metrics and defensive capability status
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Sean Nie
+ * @version 2026-06-08
  */
 public class TeamRobot extends Robot
 {

@@ -1,9 +1,11 @@
 
 /**
- * Write a description of class Tournament here.
+ * Handles all of the data for a tournament
+ * Kind of like the database for scouted teams?
+ * Includes all the logic for sorting teams
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Sean Nie
+ * @version 2026-06-08
  */
 
 import java.util.ArrayList;
@@ -22,12 +24,12 @@ public class Tournament
     //maybe have a constant to limit number of matches
     //private static final short MAXMATCHES = 100;
     
-    //constructor
+    //constructor to initialize an empty tournament
     public Tournament(){
         this.scoutRobots = new ArrayList<ScoutedRobot>();
     }
     
-    //add a robot object to the list of scouted robots
+    //add an already instantiated ScoutedRobot object directly to the list of scouted robots
     public void addRobot(ScoutedRobot robot){
         this.scoutRobots.add(robot);
     }
@@ -38,102 +40,81 @@ public class Tournament
         this.scoutRobots.add(newScoutedRobot);
     }
     
-    //get team number from a string -> get from file later
-    public void addRobot(String strTeamNumber){
-        try{
-            short shrTeamNumber = Short.parseShort(strTeamNumber); //parse the string into a short
-            ScoutedRobot newScoutedRobot = new ScoutedRobot(shrTeamNumber); //create a new scouted robot based on the team number
-            
-            //add the newly created scoutedrobot to the array list
-            this.scoutRobots.add(newScoutedRobot);
-        }
-        catch (NumberFormatException e){
-            System.out.println("Invalid team number!");
-        }
+    //merge sort to sort the weighed scores (for the picklist tab)
+    public void sortByWeightedScore(byte bytFuel, byte bytClimb, byte bytDef){
+        this.mergeSortWeighted(this.scoutRobots, 0, this.scoutRobots.size() - 1, bytFuel, bytClimb, bytDef);
     }
     
-    //sort the scores of each robot using merge sort
-    public void sortByScore(){
-        this.mergeSort(this.scoutRobots, 0, this.scoutRobots.size() - 1);
-    }
-    
-    //sortByScore mergeSort helper method
-    private void mergeSort(ArrayList<ScoutedRobot> robotList, int left, int right){
-        int middle;
-        
+    private void mergeSortWeighted(ArrayList<ScoutedRobot> robotList, int left, int right, byte bytFuel, byte bytClimb, byte bytDef) {
         //check if there are more than one element in the array
-        if (left < right) 
-        {
-            //find the middle point of the array
-            middle = (left + right) / 2;
-
+        if (left < right) {
+            //find the midpoint of the array lsit
+            int middle = (left + right) / 2;
+            
             //recursively sort the first and second halves
-            mergeSort(robotList, left, middle);
-            mergeSort(robotList, middle + 1, right);
-
+            mergeSortWeighted(robotList, left, middle, bytFuel, bytClimb, bytDef);
+            mergeSortWeighted(robotList, middle + 1, right, bytFuel, bytClimb, bytDef);
+            
             //merge the sorted halves
-            merge(robotList, left, middle, right);
+            mergeWeighted(robotList, left, middle, right, bytFuel, bytClimb, bytDef);
         }
     }
-    
-    //sortByScore merge helper method
-    private void merge(ArrayList<ScoutedRobot> robotList, int left, int mid, int right){
+
+    private void mergeWeighted(ArrayList<ScoutedRobot> robotList, int left, int mid, int right, byte bytFuel, byte bytClimb, byte bytDef) {
         //calculate the sizes of the two subarrays to be merged
         int intLeftSize = mid - left + 1;
         int intRightSize = right - mid;
         
         //temporary arraylists that will store the "sorted" scores
-        ArrayList<ScoutedRobot> leftList = new ArrayList<ScoutedRobot>();
-        ArrayList<ScoutedRobot> rightList = new ArrayList<ScoutedRobot>();
+        ArrayList<ScoutedRobot> leftList = new ArrayList<>();
+        ArrayList<ScoutedRobot> rightList = new ArrayList<>();
         
         //copy data to the temp arraylists
-        for (int i = 0; i < intLeftSize; i++) 
-        {
+        for (int i = 0; i < intLeftSize; i++){
             leftList.add(robotList.get(left + i));
         }
         
-        for (int j = 0; j < intRightSize; j++) 
-        {
+        for (int j = 0; j < intRightSize; j++){
             rightList.add(robotList.get(mid + 1 + j));
         }
-
-        //merge the temporary arraylists
-
+        
         //initial indexes of the two subarrays
         int i = 0;
         int j = 0;
-
+        
         //initial index of the merged subarray
         int k = left;
         
-        while (i < intLeftSize && j < intRightSize) 
-        {
-            //compare elements of the two subarrays and merge them in ascending 
-            //order
-            if (leftList.get(i).getIndividualScore() >= rightList.get(j).getIndividualScore()) 
-            {
+        //merge the temporary arraylists
+        while (i < intLeftSize && j < intRightSize) {
+            //calculate weighted score for the left robot
+            ScoutedRobot r1 = leftList.get(i);
+            int score1 = (r1.getAutoFuelCount() + r1.getTeleFuelCount() + r1.getEndFuelCount()) * bytFuel + (r1.getClimbLevel() * 10) * bytClimb + (r1.getDefenceTime()) * bytDef;
+                       
+            //calculate weighted score for the right robot
+            ScoutedRobot r2 = rightList.get(j);
+            int score2 = (r2.getAutoFuelCount() + r2.getTeleFuelCount() + r2.getEndFuelCount()) * bytFuel + (r2.getClimbLevel() * 10) * bytClimb + (r2.getDefenceTime()) * bytDef;
+            
+            //sort descending based on weights
+            if (score1 >= score2) {
                 robotList.set(k, leftList.get(i));
                 i++;
-            } 
-            else 
-            {
+            } else {
                 robotList.set(k, rightList.get(j));
                 j++;
             }
             k++;
         }
-
+        
         //copy remaining elements of leftList if any
-        while (i < intLeftSize) 
-        {
+        while (i < intLeftSize){
             robotList.set(k, leftList.get(i));
             i++;
             k++;
         }
-
+        
         //copy remaining elements of rightList if any
-        while (j < intRightSize) 
-        {
+        while (j < intRightSize) {
             robotList.set(k, rightList.get(j));
             j++;
             k++;
@@ -167,7 +148,8 @@ public class Tournament
         return null;
     }
     
-    //use insertion sort to sort the teams by team number (might be useless since only score really matters..)
+    //use insertion sort to sort the teams by team number
+    //needed for binary search
     private void sortByTeamNumber(){
         //length of the array
         int listLength = this.scoutRobots.size(); 

@@ -392,14 +392,13 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     private void generatePicklist(){
-        this.tournament.sortByScore();
-        
-        ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
-        
         byte bytFuelWeight = (byte)this.sldFuelWeight.getValue();
         byte bytClimbWeight = (byte)this.sldClimbWeight.getValue();
         byte bytDefenceWeight = (byte)this.sldDefenceWeight.getValue();
         
+        this.tournament.sortByWeightedScore(bytFuelWeight, bytClimbWeight, bytDefenceWeight);
+        
+        ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
         this.picklistModel.setRowCount(0);
         
         for (int i = 0; i < scoutRobots.size(); i++){

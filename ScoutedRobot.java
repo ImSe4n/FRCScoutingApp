@@ -1,9 +1,11 @@
 
 /**
- * Write a description of class ScoutedRobot here.
+ * An extended robot profile that tracks detailed match stats.
+ * Inhertits methods from the robot superclass
+ * 
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Sean Nie
+ * @version 2026-06-08
  */
 public class ScoutedRobot extends Robot
 {
@@ -19,7 +21,7 @@ public class ScoutedRobot extends Robot
     //main constructor
     public ScoutedRobot(short shrTeamNumber, short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating, String strNotes){
         super(shrTeamNumber);
-        this.shrMatchesObserved = 1;
+        this.shrMatchesObserved = 1; //set tp 1 since once a scoutedrobot is created, we know it is their first match
         super.setAutoFuelCount(shrAutoFuelCount);
         super.setTeleFuelCount(shrTeleFuelCount);
         super.setEndFuelCount(shrEndFuelCount);
@@ -32,7 +34,8 @@ public class ScoutedRobot extends Robot
         this.strNotes = strNotes;
     }
     
-    //overloaded constructor
+    //overloaded constructor to initialize an unobserved robot
+    //set placeholder values
     public ScoutedRobot(short shrTeamNumber){
         super(shrTeamNumber);
         this.shrMatchesObserved = 0;
@@ -47,6 +50,8 @@ public class ScoutedRobot extends Robot
     //methods
     
     //overriden method since the score for scouted robots is calculated differently
+    //the score is adjustted to an overall score based on the scouting data
+    //adds in the penalty deductions
     @Override
     public short getIndividualScore(){
         //accuracy factor for shooting fuel (since not all balls will go in and the scouter cant see EVERTHING)
@@ -68,18 +73,20 @@ public class ScoutedRobot extends Robot
         return (short)(shrFuelScore + shrClimbScore - bytPenalties);
     }
     
-    //toString
+    //toString that returns all robot statistics
     @Override
     public String toString(){
         return String.format("Team %d | Obs: %d | Auto: %d | Tele: %d | End: %d | Climb L%d | " + "Def: %ds | Pen: %d/%d | Drv: %d/5 | Acc: %d/5 | Score: %d", super.getTeamNumber(), this.shrMatchesObserved, super.getAutoFuelCount(), super.getTeleFuelCount(), super.getEndFuelCount(), super.getClimbLevel(), this.bytDefenceTime, this.bytMinorPenalties, this.bytMajorPenalties, this.bytDriverRating, this.bytAccuracyRating, this.getIndividualScore());
     }
     
     //method that updates the average stats of a robot
-    public void addMatchObservation(short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, int bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating){
+    public void addMatchObservation(short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating){
         //use a temporary previous matches varibale which will be used to calculate verage
         short previousMatchesObserved = this.shrMatchesObserved;
         
         //get the average stats of each fuel count + climb level
+        //calculated as: ((current stat average * previous matches) + new stat value) / total matches
+        //or: (exact total sum of all points scored in history + new current value) / total matches played
         super.setAutoFuelCount((short)((super.getAutoFuelCount() * previousMatchesObserved + shrAutoFuelCount) / (previousMatchesObserved + 1)));
         super.setTeleFuelCount((short)((super.getTeleFuelCount() * previousMatchesObserved + shrTeleFuelCount) / (previousMatchesObserved + 1)));
         super.setEndFuelCount((short)((super.getEndFuelCount() * previousMatchesObserved + shrEndFuelCount) / (previousMatchesObserved + 1)));
