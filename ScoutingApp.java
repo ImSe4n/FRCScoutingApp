@@ -59,7 +59,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.setSize(900,600);
         
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null); //place in the center of the screen
         
         JTabbedPane tabbedApp = new JTabbedPane();
         tabbedApp.addTab("Scouting Data Entry Tab", this.scoutEntryTab());
@@ -109,7 +109,9 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.setVisible(true);
     }
     
+    //tab where the scout enters robot data
     private JPanel scoutEntryTab(){
+        
         JPanel scoutEntryTab = new JPanel(new BorderLayout());
         JPanel formPanel = new JPanel(new GridLayout(0,2,10,5));
         
@@ -174,11 +176,14 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         return scoutEntryTab;
     }
     
+    //tab that displays all the scouted robots and their stats in a table
     private JPanel dashboardTab(){
         JPanel dashboardTab = new JPanel(new BorderLayout());
         
+        //use an array of strings for the column names
         String[] strStatColumns = {"Team #", "Avg Auto", "Avg Tele", "Avg End", "Avg Score", "# Matches Played"};
         
+        //create the table model with the column names and 0 rows
         this.dashboardModel = new DefaultTableModel(strStatColumns, 0){
             public boolean isCellEditable(int intRow, int intCol){
                 return false;
@@ -197,12 +202,16 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         return dashboardTab;
     }
     
+    //tab that predicts the outcome of a match based on the selected robots for each alliance
     private JPanel matchPredictorTab(){
         JPanel matchPredictorTab = new JPanel(new BorderLayout());
         
         JPanel selectionPanel = new JPanel(new GridLayout(6,2,10,5));
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         
+        //use combo boxes for the robot selection since there will be
+        //a finite number of robots and it will prevent invalid team numbers
+        //from being entered
         this.redRobot1 = new JComboBox<String>();
         this.redRobot2 = new JComboBox<String>();
         this.redRobot3 = new JComboBox<String>();
@@ -210,6 +219,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.blueRobot2 = new JComboBox<String>();
         this.blueRobot3 = new JComboBox<String>();
         
+        //add the combo boxes to the selection panel with labels
         selectionPanel.add(new JLabel("Red Alliance 1: "));
         selectionPanel.add(this.redRobot1);
         selectionPanel.add(new JLabel("Red Alliance 2: "));
@@ -228,6 +238,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.txtMatchResult.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         
         JButton btnSimulateMatch = new JButton("Simulate Match");
+        //add an action listener to the button so that when its clicked, the simulateMatch method will run 
+        //and output the result in the txtMatchResult text area
         btnSimulateMatch.addActionListener(e -> this.simulateMatch());
         
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -241,6 +253,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         return matchPredictorTab;
     }
     
+    //tab that generates a picklist of teams based on the scouting data
+    //and user defined weights for each stat category
     private JPanel picklistTab(){
         JPanel picklistTab = new JPanel(new BorderLayout());
         
@@ -271,6 +285,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
         String[] statColumns = {"Rank", "Team #", "Weighted Score", "Matches Scouted"};
         
+        //add the stat columns to the table model and make the cells non-editable
         this.picklistModel = new DefaultTableModel(statColumns, 0){
             public boolean isCellEditable(int intRow, int intCol){
                 return false;
@@ -280,6 +295,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         JTable picklistTable = new JTable(this.picklistModel);
         
         JButton btnGenerate = new JButton("Generate Picklist");
+        //add an action listener to the button so that when its clicked
+        //the generatePicklist method will run
         btnGenerate.addActionListener(e -> this.generatePicklist());
         
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -293,6 +310,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
     }
     
     //event handler methods
+    //method that runs when the submit button is clicked in the scouting data entry tab
     private void scoutedBotSubmit(){
         // spnAutoFuel;
         // private JSpinner spnTeleFuel;
@@ -306,6 +324,11 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         // private JTextField txtNotes
         
         try {
+            //need to double cast the values from the spinners
+            //since they return Objects and we need to
+            //convert them to the correct types for the ScoutedRobot class
+            //double casting works by first casting the Object to an Integer (since the spinner values are integers)
+            //and then casting the Integer to a short or byte as needed
             short shrTeamNumber = Short.parseShort(this.txtTeamNumber.getText());
             short shrAutoFuel = (short)(int)this.spnAutoFuel.getValue();
             short shrTeleFuel = (short)(int)this.spnTeleFuel.getValue();
@@ -321,15 +344,22 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             //find robot and if its not scouted yet, then create an empty robot object
             ScoutedRobot robot = this.tournament.findRobot(shrTeamNumber);
             
+            //if the robot has not been scouted yet
+            //then create a new scouted robot with the team number and
+            //default values for the stats
             if (robot == null){
                 this.tournament.addRobot(shrTeamNumber);
                 
                 robot = this.tournament.findRobot(shrTeamNumber);
             }
             
+            //add the new match observation to the robot
+            //and update the average stats of the robot
             robot.addMatchObservation(shrAutoFuel, shrTeleFuel, shrEndFuel, bytClimbLevel, bytDefenceTime, bytMinorPenalties, bytMajorPenalties, bytDriverDrating, bytAccuracyRating);
             robot.setNotes(strNotes);
             
+            //update the lblEntryStatus to show a successful entry
+            //with the team number and number of observations for that robot
             this.lblEntryStatus.setText("Team " + shrTeamNumber + " updated. Observations: " + robot.getMatchesObserved());
             
             //reset the form to its defaults after submitting
@@ -352,8 +382,11 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         }
     }
     
+    //method that simulates a match when the simulate match button is clicked in the match predictor tab
     private void simulateMatch(){
         try {
+            //get the selected team numbers from the combo boxes
+            //need to cast the selected items to strings since they are returned as Objects
             String strRed1 = (String)this.redRobot1.getSelectedItem();
             String strRed2 = (String)this.redRobot2.getSelectedItem();
             String strRed3 = (String)this.redRobot3.getSelectedItem();
@@ -361,12 +394,15 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             String strBlue2 = (String)this.blueRobot2.getSelectedItem();
             String strBlue3 = (String)this.blueRobot3.getSelectedItem();
             
+            //check if any of the selections are null (in case there are less than 6 robots in the data) and output an error if so
             if (strRed1 == null || strRed2 == null || strRed3 == null || strBlue1 == null || strBlue2 == null || strBlue3 == null){
                 this.txtMatchResult.setText("Error. Please add at least 6 robots before simulating the match.");
                 
                 return;
             }
             
+            //find the corresponding scouted robot objects for each selected team number
+            //need to parse the strings to shorts since the findRobot method takes a short as an argument
             ScoutedRobot red1 = this.tournament.findRobot(Short.parseShort(strRed1));
             ScoutedRobot red2 = this.tournament.findRobot(Short.parseShort(strRed2));
             ScoutedRobot red3 = this.tournament.findRobot(Short.parseShort(strRed3));
@@ -374,36 +410,52 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             ScoutedRobot blue2 = this.tournament.findRobot(Short.parseShort(strBlue2));
             ScoutedRobot blue3 = this.tournament.findRobot(Short.parseShort(strBlue3));
             
+            //if any of the selected robots are not found in the data, output an error
             if (red1 == null || red2 == null || red3 == null || blue1 == null || blue2 == null || blue3 == null){
                 this.txtMatchResult.setText("Error. One or more robots do not exist in the current data.");
                 
                 return;
             }
             
+            //crete 2 alliances with the selected robots and simulate a match between them
             Alliance redAlliance = new Alliance(red1, red2, red3);
             Alliance blueAlliance = new Alliance(blue1, blue2, blue3);
             
+            //create a match object with the 2 alliances and a match number of 0
             Match match = new Match(redAlliance, blueAlliance, (byte)0);
             
+            //update the txtMatchResult text area with the summary of the match result
             this.txtMatchResult.setText(match.getGameSummary());
         } catch (NumberFormatException e){
             this.txtMatchResult.setText("Error. Invalid team number in selection.");
         }
     }
     
+    //method that generates a picklist based on the weights from the sliders and
+    //the scouting data when the generate picklist button is clicked in the picklist tab
     private void generatePicklist(){
+        //get the weights from the sliders and sort the robots in the tournament by their weighted score
+        //casting is needed since the slider values are returned as ints but the weights in the tournament sorting method are bytes
         byte bytFuelWeight = (byte)this.sldFuelWeight.getValue();
         byte bytClimbWeight = (byte)this.sldClimbWeight.getValue();
         byte bytDefenceWeight = (byte)this.sldDefenceWeight.getValue();
         
+        //call the sortByWeightedScore method in the tournament class to sort the robots based on the weights
         this.tournament.sortByWeightedScore(bytFuelWeight, bytClimbWeight, bytDefenceWeight);
         
+        //after sorting the robots, get the sorted list of scouted robots and add them to the picklist table with their rank, team number, weighted score, and matches scouted
         ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
+        //reset picklist table before adding the sorted robots
         this.picklistModel.setRowCount(0);
         
+        //loop through the sorted list of robots and add them to the picklist table
+        //with their rank, team number, weighted score, and matches scouted
         for (int i = 0; i < scoutRobots.size(); i++){
+            //get the robot from the sorted list
             ScoutedRobot robot = scoutRobots.get(i);
-            
+        
+            //calculate the weighted score for each robot based on the weights and the robot's stats
+            //casting is needed since the robot stats are shorts and bytes but the weights are bytes, and the final weighted score is a short
             short shrFuelScore = (short)(robot.getAutoFuelCount() + robot.getTeleFuelCount() + robot.getEndFuelCount());
             short shrClimbScore = (short)(robot.getClimbLevel() * 10);
             short shrDefenceScore = (short)(robot.getDefenceTime());
@@ -413,6 +465,8 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             
             //need to find a way to sort the weighted scores so the ranks match the correct robot
             
+            //use an object array to add the robot stats to the table model
+            //has to be an object array since the table model can have different types of data (strings, ints, etc)
             Object[] statRow = {i+1, robot.getTeamNumber(), shrWeightedScore, robot.getMatchesObserved()};
             
             this.picklistModel.addRow(statRow);
@@ -420,6 +474,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         
     }
     
+    //method that refreshes the dashboard table with the current list of scouted robots and their stats
     private void refreshDashboard(){
         //remove all rows to reset the dashboard
         this.dashboardModel.setRowCount(0);
@@ -430,6 +485,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         for (ScoutedRobot robot: scoutRobots){
             //for each robot, get their stats
             
+            //need to use an object array to add the robot stats to the table model
             Object[] statRow = {
                 robot.getTeamNumber(),
                 robot.getAutoFuelCount(),
@@ -439,13 +495,17 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
                 robot.getMatchesObserved()
             };
             
+            //add the robot stats to the dashboard table model as a new row
             this.dashboardModel.addRow(statRow);
         }
     }
     
+    //method that refreshes the combo boxes in the match predictor tab with the current list of scouted robots
     private void refreshComboBoxes(){
+        //get the current list of scouted robots to populate the combo boxes
         ArrayList<ScoutedRobot> scoutRobots = this.tournament.getRobots();
         
+        //first clear all the combo boxes before repopulating them with the updated list of robots
         this.redRobot1.removeAllItems();
         this.redRobot2.removeAllItems();
         this.redRobot3.removeAllItems();
@@ -453,6 +513,7 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         this.blueRobot2.removeAllItems();
         this.blueRobot3.removeAllItems();
         
+        //loop through the list of scouted robots and add their team numbers as options in the combo boxes
         for (ScoutedRobot robot: scoutRobots){
             String strTeamNum = String.valueOf(robot.getTeamNumber());
             
@@ -473,11 +534,15 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
         fileChooser.setFileFilter(filter);
         
+        //show the file chooser dialog and get the result (approve or cancel)
         int intResult = fileChooser.showOpenDialog(this);
         
+        //if the user approves the file selection, get the file name and save the tournament data to that file
         if (intResult == JFileChooser.APPROVE_OPTION){
+            //get the absolute path of the selected file as a string
             String strFileName = fileChooser.getSelectedFile().getAbsolutePath();
-        
+            
+            //call the saveToFile method in the tournament class to save the data to the selected file
             this.tournament.saveToFile(strFileName);
         
             JOptionPane.showMessageDialog(this, "File Saved Successfully!");
@@ -491,8 +556,10 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
         fileChooser.setFileFilter(filter);
         
+        //show the file chooser dialog and get the result (approve or cancel)
         int intResult = fileChooser.showOpenDialog(this);
         
+        //if the user approves the file selection, get the file name and load the tournament data from that file, then refresh the dashboard to show the loaded data
         if (intResult == JFileChooser.APPROVE_OPTION){
             String strFileName = fileChooser.getSelectedFile().getAbsolutePath();
         

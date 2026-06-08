@@ -76,12 +76,13 @@ public class ScoutedRobot extends Robot
     //toString that returns all robot statistics
     @Override
     public String toString(){
-        return String.format("Team %d | Obs: %d | Auto: %d | Tele: %d | End: %d | Climb L%d | " + "Def: %ds | Pen: %d/%d | Drv: %d/5 | Acc: %d/5 | Score: %d", super.getTeamNumber(), this.shrMatchesObserved, super.getAutoFuelCount(), super.getTeleFuelCount(), super.getEndFuelCount(), super.getClimbLevel(), this.bytDefenceTime, this.bytMinorPenalties, this.bytMajorPenalties, this.bytDriverRating, this.bytAccuracyRating, this.getIndividualScore());
+        return "Team " + super.getTeamNumber() + " | Obs: " + this.shrMatchesObserved + " | Auto: " + super.getAutoFuelCount() + " | Tele: " + super.getTeleFuelCount() + " | End: " + super.getEndFuelCount() + " | Climb L" + super.getClimbLevel() + " | Def: " + this.bytDefenceTime + "s | Pen: " + this.bytMinorPenalties + "/" + this.bytMajorPenalties + " | Drv: " + this.bytDriverRating + "/5 | Acc: " + this.bytAccuracyRating + "/5 | Score: " + this.getIndividualScore();
     }
     
     //method that updates the average stats of a robot
     public void addMatchObservation(short shrAutoFuelCount, short shrTeleFuelCount, short shrEndFuelCount, byte bytClimbLevel, byte bytDefenceTime, byte bytMinorPenalties, byte bytMajorPenalties, byte bytDriverRating, byte bytAccuracyRating){
         //use a temporary previous matches varibale which will be used to calculate verage
+        //need to use a temporary variable since the matches observed variable needs to be incremented after the average is calculated
         short previousMatchesObserved = this.shrMatchesObserved;
         
         //get the average stats of each fuel count + climb level

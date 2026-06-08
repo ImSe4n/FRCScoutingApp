@@ -45,8 +45,9 @@ public class Tournament
         this.mergeSortWeighted(this.scoutRobots, 0, this.scoutRobots.size() - 1, bytFuel, bytClimb, bytDef);
     }
     
+    //merge sort algorithm to sort the scouted robots based on a weighted score that takes into account their fuel counts, climb level, and defence time, with customizable weights for each category
     private void mergeSortWeighted(ArrayList<ScoutedRobot> robotList, int left, int right, byte bytFuel, byte bytClimb, byte bytDef) {
-        //check if there are more than one element in the array
+        //check if the left index is less than the right index, which means there are at least 2 elements to sort
         if (left < right) {
             //find the midpoint of the array lsit
             int middle = (left + right) / 2;
@@ -62,6 +63,8 @@ public class Tournament
 
     private void mergeWeighted(ArrayList<ScoutedRobot> robotList, int left, int mid, int right, byte bytFuel, byte bytClimb, byte bytDef) {
         //calculate the sizes of the two subarrays to be merged
+        //the left subarray goes from index left to mid
+        //and the right subarray goes from index mid + 1 to right
         int intLeftSize = mid - left + 1;
         int intRightSize = right - mid;
         
@@ -69,7 +72,7 @@ public class Tournament
         ArrayList<ScoutedRobot> leftList = new ArrayList<>();
         ArrayList<ScoutedRobot> rightList = new ArrayList<>();
         
-        //copy data to the temp arraylists
+        //loop through the left and right subarrays and add the robots to the respective temporary arraylists
         for (int i = 0; i < intLeftSize; i++){
             leftList.add(robotList.get(left + i));
         }
@@ -79,10 +82,14 @@ public class Tournament
         }
         
         //initial indexes of the two subarrays
+        //needed to keep track of where we are in the temporary arraylists
+        // as we merge them back into the original arraylist
         int i = 0;
         int j = 0;
         
         //initial index of the merged subarray
+        //needed to keep track of where we are in the original arraylist as we merge
+        // the sorted temporary arraylists back into it
         int k = left;
         
         //merge the temporary arraylists
@@ -123,16 +130,25 @@ public class Tournament
     
     //use binary search to find a robot based on their team number
     public ScoutedRobot findRobot(short shrTeamNumber){
+        //sort the list of scouted robots by team number before performing binary search
         this.sortByTeamNumber();
         
+        //initialize the left and right pointers for the binary search
         int intLeft = 0;
         int intRight = this.scoutRobots.size() - 1;
         
+        //perform binary search
+        //keep looping until the left pointer is less than or equal to the right pointer
         while (intLeft <= intRight){
+            //calculate the midpoint index of the current search range
             int intMid = intLeft + (intRight - intLeft) / 2;
             
+            //get the team number of the robot at the midpoint index to compare with the target team number
             short shrMidTeam = this.scoutRobots.get(intMid).getTeamNumber();
             
+            //if the team number at the midpoint index matches the target team number, return that robot
+            //if the team number at the midpoint index is less than the target team number, move the left pointer to the right of the midpoint index to search in the upper half of the list
+            //if the team number at the midpoint index is greater than the target team number, move the right pointer to the left of the midpoint index to search in the lower half of the list
             if (shrMidTeam == shrTeamNumber){
                 return this.scoutRobots.get(intMid);
             }
@@ -154,25 +170,29 @@ public class Tournament
         //length of the array
         int listLength = this.scoutRobots.size(); 
         
-        //variable to hold the current element being compared
+        //temporary variable to hold the current robot being compared in the inner loop
         ScoutedRobot key; 
         
         //variable for the inner loop
+        //needed to keep track of the index of the element being compared to key in the inner loop
         int j; 
 
         //iterate through the array starting from the second element
         for (int i = 1; i < listLength; ++i) 
         {
             //current element to be compared
+            //this is the robot that we want to find the correct position for in the sorted part of the array (to the left of index i)
             key = this.scoutRobots.get(i);
             
             //index of the element to the left of the current element
+            //this is the last index of the sorted part of the array that we will compare key to in order to find the correct position for key
             j = i - 1; 
 
-            //move elements of the arraylist 0, i-1... that are greater than key to one 
-            //position ahead of their current position
-            //this loop shifts elements to the right until the correct position 
-            //for key is found
+            //keep moving elements that are greater than key to the right until we find the correct position for key in the sorted part of the array
+            //we compare the team number of the robot at index j with the team number of key to determine if we need to move the robot at index j to the right
+            //if the team number of the robot at index j is greater than the team number of key, we move the robot at index j to the right (to index j + 1) and decrement j to compare key with the next robot to the left in the sorted part of the array
+            //if the team number of the robot at index j is less than or equal to the team number of key, we have found the correct position for key in the sorted part of the array and we can exit the inner loop
+            //we also need to check that j is greater than or equal to 0 to make sure we don't go out of bounds on the left side of the array
             while (j >= 0 && this.scoutRobots.get(j).getTeamNumber() > key.getTeamNumber()) 
             {
                 //move the element to the right
@@ -183,7 +203,7 @@ public class Tournament
             }
 
             //place the scouted robot in its correct position in the sorted part of 
-            //the arraylist
+            //the arraylist and move to the next element in the outer loop
             this.scoutRobots.set(j + 1, key);
         }
     }

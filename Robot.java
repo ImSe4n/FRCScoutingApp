@@ -32,8 +32,7 @@ public class Robot implements java.io.Serializable
     
     //toString which returns a formatted summary string of the robot's match performance.
     public String toString(){
-        return String.format("Team %d | Auto Points: %d | Teleop Points: %d | Endgame Points: %d | Climb Points: %d | Score: %d", 
-        this.shrTeamNumber, this.shrAutoFuelCount, this.shrTeleFuelCount, this.shrEndFuelCount, this.bytClimbLevel, this.getIndividualScore());
+        return "Team " + this.shrTeamNumber + " | Auto Points: " + this.shrAutoFuelCount + " | Teleop Points: " + this.shrTeleFuelCount + " | Endgame Points: " + this.shrEndFuelCount + " | Climb Points: " + this.bytClimbLevel + " | Score: " + this.getIndividualScore();
     }
     
     //getters and setters

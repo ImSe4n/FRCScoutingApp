@@ -32,7 +32,7 @@ public class TeamRobot extends Robot
     //toString
     @Override
     public String toString(){
-        return super.toString() + String.format(" | Defence: %s", this.boolCanPlayDefence); //can format later using yes/no
+        return super.toString() + " | Defence: " + this.boolCanPlayDefence;
     }
     
     //gettters and setters

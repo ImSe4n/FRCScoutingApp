@@ -38,13 +38,15 @@ public class Match
         short shrRedScore = this.redAlliance.calculateTotalScore();
         short shrBlueScore = this.blueAlliance.calculateTotalScore();
         String strWinner;
+        //use a local strWinner variable because we dont want to change 
+        //the state of the match object
         if (shrRedScore >= shrBlueScore){
             strWinner = "Red";
         }
         else {
             strWinner = "Blue";
         }
-        return String.format("Match %d | Red: %d | Blue: %d | Predicted Winner: %s", this.bytMatchNumber, shrRedScore, shrBlueScore, strWinner);
+        return "Match " + this.bytMatchNumber + " | Red: " + shrRedScore + " | Blue: " + shrBlueScore + " | Predicted Winner: " + strWinner;
     }
 
     //Getters and Setters
