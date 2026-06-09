@@ -341,15 +341,16 @@ public class ScoutingApp extends JFrame //inhertie from JFrame since it is the a
             byte bytAccuracyRating = (byte)(int)this.spnAccuracyRating.getValue();
             String strNotes = this.txtNotes.getText();
             
-            //find robot and if its not scouted yet, then create an empty robot object
+            //find robot with the current team number
             ScoutedRobot robot = this.tournament.findRobot(shrTeamNumber);
             
             //if the robot has not been scouted yet
-            //then create a new scouted robot with the team number and
-            //default values for the stats
+            //then create a new scouted robot with the team number
             if (robot == null){
                 this.tournament.addRobot(shrTeamNumber);
                 
+                //after the scoutedrobot object is created and added to the array list of robots
+                //try to find it (should always find it)
                 robot = this.tournament.findRobot(shrTeamNumber);
             }
             

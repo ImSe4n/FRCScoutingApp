@@ -1,7 +1,7 @@
 
 /**
- * A specific robot profile designated for the user's own team strategies
- * Extends robot to initialize a team robot with its core performance metrics and defensive capability status
+ * A specific robot designated for the user's own team strategies
+ * Extends robot to initialize a team robot
  *
  * @author Sean Nie
  * @version 2026-06-08
@@ -22,7 +22,7 @@ public class TeamRobot extends Robot
         this.boolCanPlayDefence = boolCanPlayDefence;
     }
     
-    //overriden method for team robot (basically same as super, prolly gonna remove)
+    //overriden method for team robot (the same as super, prolly gonna remove?)
     @Override
     public short getIndividualScore(){
         short totalMatchPoints = (short)(super.getAutoFuelCount() + super.getTeleFuelCount() + super.getEndFuelCount() + super.getClimbLevel()*10);

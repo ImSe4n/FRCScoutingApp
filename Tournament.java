@@ -46,9 +46,9 @@ public class Tournament
     }
     
     //merge sort algorithm to sort the scouted robots based on a weighted score that takes into account their fuel counts, climb level, and defence time, with customizable weights for each category
-    private void mergeSortWeighted(ArrayList<ScoutedRobot> robotList, int left, int right, byte bytFuel, byte bytClimb, byte bytDef) {
+    private void mergeSortWeighted(ArrayList<ScoutedRobot> robotList, int left, int right, byte bytFuel, byte bytClimb, byte bytDef){
         //check if the left index is less than the right index, which means there are at least 2 elements to sort
-        if (left < right) {
+        if (left < right){
             //find the midpoint of the array lsit
             int middle = (left + right) / 2;
             
@@ -61,7 +61,7 @@ public class Tournament
         }
     }
 
-    private void mergeWeighted(ArrayList<ScoutedRobot> robotList, int left, int mid, int right, byte bytFuel, byte bytClimb, byte bytDef) {
+    private void mergeWeighted(ArrayList<ScoutedRobot> robotList, int left, int mid, int right, byte bytFuel, byte bytClimb, byte bytDef){
         //calculate the sizes of the two subarrays to be merged
         //the left subarray goes from index left to mid
         //and the right subarray goes from index mid + 1 to right
@@ -93,7 +93,7 @@ public class Tournament
         int k = left;
         
         //merge the temporary arraylists
-        while (i < intLeftSize && j < intRightSize) {
+        while (i < intLeftSize && j < intRightSize){
             //calculate weighted score for the left robot
             ScoutedRobot r1 = leftList.get(i);
             int score1 = (r1.getAutoFuelCount() + r1.getTeleFuelCount() + r1.getEndFuelCount()) * bytFuel + (r1.getClimbLevel() * 10) * bytClimb + (r1.getDefenceTime()) * bytDef;
@@ -103,10 +103,11 @@ public class Tournament
             int score2 = (r2.getAutoFuelCount() + r2.getTeleFuelCount() + r2.getEndFuelCount()) * bytFuel + (r2.getClimbLevel() * 10) * bytClimb + (r2.getDefenceTime()) * bytDef;
             
             //sort descending based on weights
-            if (score1 >= score2) {
+            if (score1 >= score2){
                 robotList.set(k, leftList.get(i));
                 i++;
-            } else {
+            }
+            else {
                 robotList.set(k, rightList.get(j));
                 j++;
             }
@@ -121,7 +122,7 @@ public class Tournament
         }
         
         //copy remaining elements of rightList if any
-        while (j < intRightSize) {
+        while (j < intRightSize){
             robotList.set(k, rightList.get(j));
             j++;
             k++;

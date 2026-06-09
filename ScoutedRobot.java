@@ -57,12 +57,12 @@ public class ScoutedRobot extends Robot
         //accuracy factor for shooting fuel (since not all balls will go in and the scouter cant see EVERTHING)
         float fltAccuracyFactor;
         
-        //get the accuracy as a percentage
+        //get the accuracy as a percentage (accuracy rating is from 1-5)
         if (this.bytAccuracyRating > 0){
             fltAccuracyFactor = (float) this.bytAccuracyRating / 5.0f;
         }
         else {
-            fltAccuracyFactor = 1.0f;
+            fltAccuracyFactor = 1.0f; //assume an accuracy of 1 if nothing inputted
         }
         
         //calculate the total score

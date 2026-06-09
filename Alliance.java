@@ -18,10 +18,10 @@ public class Alliance
     //static because we want to keep track of the total number of alliances across all instances of the class
     private static short shrNumAlliances = 0;
     
-    //array lis to store robost in an alliance
+    //array lis to store robots in an alliance
     private ArrayList<Robot> robots;
     
-    //overloaded constructor 1
+    //main constructor
     //initializes an alliance using three unique robots
     public Alliance(Robot robo1, Robot robo2, Robot robo3){
         this.robots = new ArrayList<Robot>();
@@ -29,15 +29,15 @@ public class Alliance
         this.robots.add(robo2);
         this.robots.add(robo3);
         Alliance.shrNumAlliances++;
-        this.updateAggregateStats();
+        this.updateAllianceStats();
     }
     
-    //overloaded constructor 2
+    //overloaded constructor
     //initializes an alliance using a pre-existing list of robots
     public Alliance(ArrayList<Robot> robots){
         this.robots = new ArrayList<Robot>(robots);
         Alliance.shrNumAlliances++;
-        this.updateAggregateStats();
+        this.updateAllianceStats();
     }
     
     //calculate the score of an alliance
@@ -68,13 +68,14 @@ public class Alliance
     public void addRobot(Robot robot){
         if (this.boolIsAllianceFull() == false){
             this.robots.add(robot);
-            this.updateAggregateStats();
+            this.updateAllianceStats();
         }
     }
     
     //update the stats of an alliance for each new robot added to the alliance
-    //sort of like a constructor but robots inside of an alliance may come with existing penalties and climb levels
-    private void updateAggregateStats(){
+    //sort of like a constructor
+    //since robots inside of an alliance may come with existing penalties and climb levels we need to find a way to update the alliance stats
+    private void updateAllianceStats(){
         this.shrTotalClimbPoints = 0;
         this.bytTotalPenalties = 0;
         

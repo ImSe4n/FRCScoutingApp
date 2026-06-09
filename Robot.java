@@ -1,7 +1,7 @@
 
 /**
  * Represents a single robot object
- * Tracks fuel count and climb level
+ * Tracks fuel count and climb level (of one match)
  *
  * @author Sean Nie
  * @version 2026-06-08
